@@ -1,2 +1,2 @@
 # Qwertz-Destek
-# Qwertz-Destek
+destek sayfam. 
