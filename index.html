@@ -2,1065 +2,159 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Qwertzio - Eski Türkçe Öğren</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eski Türkçe Dil Öğrenimi</title>
     <style>
-        :root {
-            --primary: #58cc02;
-            --primary-dark: #46a302;
-            --secondary: #1cb0f6;
-            --secondary-dark: #1899d6;
-            --bg: #ffffff;
-            --text: #3c3c3c;
-            --gray-light: #f1f1f1;
-            --gray-border: #e5e5e5;
-            --gray-text: #afafaf;
-            --danger: #ff4b4b;
-            --danger-dark: #ea2b2b;
-            --gold: #ffc800;
-        }
-
-        * { 
-            box-sizing: border-box; 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
-
-        body { 
-            margin: 0; 
-            padding: 0; 
-            background-color: #dae3e7; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Webintoapp Mobil Cihaz Çerçeve Simülasyonu (Masaüstü için, Mobilde tam ekran) */
-        #app { 
-            background: var(--bg); 
-            width: 100%; 
-            max-width: 450px; 
-            height: 100%; 
-            position: relative; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column;
-            box-shadow: 0 0 20px rgba(0,0,0,0.15);
-        }
-
-        /* Ekran Yapıları */
-        .screen { 
-            display: none; 
-            flex: 1; 
-            padding: 20px; 
-            flex-direction: column; 
-            align-items: center; 
-            overflow-y: auto;
-            position: absolute;
-            top: 60px; /* Üst bar için boşluk */
-            bottom: 0;
-            width: 100%;
-            left: 0;
-            background: var(--bg);
-        }
-        
-        /* Kayıt ekranı üst bar gerektirmez */
-        #screen-register {
-            top: 0;
-            z-index: 100;
-        }
-
-        .screen.active { 
-            display: flex; 
-        }
-
-        /* Üst Bilgi Barı (Duolingo Stili) */
-        .top-bar { 
-            position: absolute; 
-            top: 0; 
-            left: 0;
-            width: 100%; 
-            height: 60px;
-            padding: 0 20px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: white; 
-            z-index: 90; 
-            border-bottom: 2px solid var(--gray-border); 
-        }
-        
-        .top-bar .left-actions {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .top-bar .back-btn {
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--gray-text);
-            display: none;
-        }
-
-        .stat { 
-            font-weight: bold; 
-            font-size: 1.1rem; 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
-            background: var(--gray-light);
-            padding: 6px 12px;
-            border-radius: 12px;
-            border: 1px solid var(--gray-border);
-        }
-        .lives { color: var(--danger); }
-        .streak { color: #ff9600; }
-        .level-indicator { color: var(--secondary); }
-
-        /* Başlıklar ve Metinler */
-        h1, h2, h3 { color: var(--text); margin: 10px 0; }
-        .qwertzio-title { color: var(--primary); font-size: 2.8rem; font-weight: 900; margin-bottom: 5px; text-shadow: 2px 2px 0px rgba(0,0,0,0.05); }
-        .subtitle { color: var(--gray-text); font-size: 1rem; margin-bottom: 25px; font-weight: 600; }
-
-        /* Form Elemanları */
-        input { 
-            width: 100%; 
-            padding: 16px; 
-            margin: 10px 0; 
-            border: 2px solid var(--gray-border); 
-            border-radius: 16px; 
-            font-size: 1rem; 
-            outline: none; 
-            background: #fafafa;
-            transition: all 0.2s;
-        }
-        input:focus { 
-            border-color: var(--secondary); 
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(28, 176, 246, 0.15);
-        }
-
-        /* Butonlar */
-        button { 
-            width: 100%; 
-            padding: 16px; 
-            margin: 12px 0; 
-            border: none; 
-            border-radius: 16px; 
-            font-size: 1.1rem; 
-            font-weight: bold; 
-            cursor: pointer; 
-            color: white; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: filter 0.1s, transform 0.1s;
-        }
-        .btn-green { 
-            background-color: var(--primary); 
-            box-shadow: 0 5px 0 var(--primary-dark); 
-        }
-        .btn-green:active { 
-            transform: translateY(4px); 
-            box-shadow: 0 1px 0 var(--primary-dark); 
-        }
-        .btn-blue { 
-            background-color: var(--secondary); 
-            box-shadow: 0 5px 0 var(--secondary-dark); 
-        }
-        .btn-blue:active { 
-            transform: translateY(4px); 
-            box-shadow: 0 1px 0 var(--secondary-dark); 
-        }
-        .btn-gray {
-            background-color: #fff;
-            color: var(--text);
-            border: 2px solid var(--gray-border);
-            box-shadow: 0 4px 0 var(--gray-border);
-        }
-        .btn-gray:active {
-            transform: translateY(4px);
-            box-shadow: 0 0px 0 var(--gray-border);
-        }
-
-        /* Duolingo Stili Zig-Zag Bölüm Haritası (Dashboard) */
-        .path-container {
-            width: 100%;
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f4ecd8; /* Eski parşömen kağıdı rengi */
+            color: #3e2723;
+            margin: 0;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px 0 40px 0;
-            gap: 24px;
-        }
-        
-        .level-node {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: 800;
-            font-size: 1.4rem;
-            color: white;
-            cursor: pointer;
-            position: relative;
-            transition: transform 0.2s;
-        }
-        
-        /* Eğlenceli Zig-Zag Görünümü */
-        .level-node:nth-child(4n+1) { transform: translateX(-40px); }
-        .level-node:nth-child(4n+2) { transform: translateX(0px); }
-        .level-node:nth-child(4n+3) { transform: translateX(40px); }
-        .level-node:nth-child(4n+4) { transform: translateX(0px); }
-
-        .level-node.unlocked {
-            background: var(--primary);
-            box-shadow: 0 6px 0 var(--primary-dark);
-        }
-        .level-node.unlocked:active {
-            transform: scale(0.95) !important;
-        }
-        .level-node.locked {
-            background: #e5e5e5;
-            box-shadow: 0 6px 0 #cccccc;
-            color: #999999;
-            cursor: not-allowed;
-        }
-        
-        .level-node .tooltip {
-            position: absolute;
-            bottom: -25px;
-            background: #333;
-            color: white;
-            font-size: 0.75rem;
-            padding: 3px 8px;
-            border-radius: 6px;
-            white-space: nowrap;
-            font-weight: normal;
-            opacity: 0.8;
         }
 
-        /* Soru ve İlerleme Çubuğu */
-        .quiz-header {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .progress-container {
-            flex: 1;
-            height: 16px;
-            background: var(--gray-border);
+        .card {
+            background: #fff8e7;
+            border: 2px solid #8d6e63;
             border-radius: 10px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: var(--primary);
-            border-radius: 10px;
-            transition: width 0.3s ease;
-        }
-        
-        .question-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin: 20px 0;
+            padding: 30px;
             text-align: center;
-            color: var(--text);
+            width: 350px;
+            box-shadow: 4px 4px 15px rgba(0,0,0,0.15);
+            margin-top: 80px;
         }
 
-        .options-container {
-            width: 100%;
+        h1 {
+            font-size: 2.5em;
+            margin: 10px 0;
+            letter-spacing: 2px;
+            color: #4e342e;
+        }
+
+        .runic {
+            font-size: 1.2em;
+            color: #795548;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        button {
+            background: #5d4037;
+            color: white;
+            font-size: 1em;
+            font-family: inherit;
+            border: none;
+            padding: 12px 25px;
+            margin-top: 25px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #3e2723;
+        }
+
+        /* Bildirimlerin Birikeceği Sabit Alan */
+        #notification-area {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 280px;
             display: flex;
             flex-direction: column;
             gap: 12px;
-        }
-        .option-card {
-            background: white;
-            border: 2px solid var(--gray-border);
-            border-radius: 16px;
-            padding: 16px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.15s;
-            box-shadow: 0 3px 0 var(--gray-border);
-        }
-        .option-card:hover {
-            background: #f9f9f9;
-            border-color: #bbb;
-        }
-        .option-card:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 var(--gray-border);
-        }
-
-        /* Kaslı Kaplumbağa & Başarı Ekranı */
-        .turtle-badge-box {
-            width: 180px;
-            height: 180px;
-            margin: 20px 0;
-            animation: bounce 1s infinite alternate;
-        }
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-10px); }
-        }
-
-        /* AI Sohbet Alanı */
-        .chat-box {
-            width: 100%;
-            flex: 1;
-            border: 2px solid var(--gray-border);
-            border-radius: 16px;
-            background: #fafafa;
-            margin-bottom: 15px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            max-height: 90vh;
             overflow-y: auto;
-        }
-        .msg {
-            max-width: 80%;
-            padding: 12px 16px;
-            border-radius: 16px;
-            font-size: 0.95rem;
-            line-height: 1.4;
-            word-wrap: break-word;
-        }
-        .msg.ai {
-            background: #fff;
-            align-self: flex-start;
-            border: 2px solid var(--gray-border);
-            border-top-left-radius: 0;
-        }
-        .msg.user {
-            background: var(--secondary);
-            color: white;
-            align-self: flex-end;
-            border-top-right-radius: 0;
-        }
-        .chat-footer {
-            width: 100%;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .voice-btn-sim {
-            background: #ff4b4b;
-            color: white;
-            border-radius: 50%;
-            width: 55px;
-            height: 55px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #ea2b2b;
-        }
-        .voice-btn-sim:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #ea2b2b;
+            padding-right: 10px;
         }
 
-        /* Bildirim Toast Mesajı */
-        #notification-toast { 
-            position: absolute; 
-            top: 75px; 
-            left: 50%; 
-            transform: translateX(-50%) translateY(-100px); 
-            background: var(--secondary); 
-            color: white; 
-            padding: 12px 24px; 
-            border-radius: 30px; 
-            font-weight: bold; 
-            z-index: 200; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15); 
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            pointer-events: none;
-        }
-        #notification-toast.show {
-            transform: translateX(-50%) translateY(0);
+        /* Özel Kaydırma Çubuğu (Scrollbar) */
+        #notification-area::-webkit-scrollbar { width: 6px; }
+        #notification-area::-webkit-scrollbar-thumb { background: #8d6e63; border-radius: 10px; }
+
+        /* Bildirim Tasarımı */
+        .notification {
+            background: #d7ccc8;
+            border-left: 6px solid #5d4037;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+            font-size: 0.9em;
+            transition: opacity 1s ease-in-out, transform 0.3s;
         }
 
-        .timer-warning {
-            color: var(--danger);
-            font-weight: 700;
-            margin: 10px 0;
-            font-size: 0.9rem;
-            background: #ffebeb;
-            padding: 8px 16px;
-            border-radius: 12px;
-            display: none;
+        /* BİLDİRİMLER KOMPLE KAYBOLMUYOR: Sadece soluklaşıyor */
+        .notification.faded {
+            opacity: 0.4;
         }
 
-        /* Alt Gezinme Barı (Dashboard Modu için) */
-        .bottom-nav {
-            width: 100%;
-            height: 65px;
-            border-top: 2px solid var(--gray-border);
-            background: #fff;
-            display: none;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 90;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--gray-text);
-            cursor: pointer;
-            gap: 3px;
-        }
-        .nav-item.active {
-            color: var(--primary);
-        }
-        .nav-item svg {
-            width: 24px;
-            height: 24px;
-            fill: currentColor;
+        /* Üzerine gelince tekrar görünür oluyorlar */
+        .notification.faded:hover {
+            opacity: 1;
+            transform: scale(1.02);
+            cursor: default;
         }
     </style>
 </head>
 <body>
 
-<div id="app">
-    
-    <!-- Bildirim Penceresi -->
-    <div id="notification-toast">
-        <span>❤️</span> <span id="toast-text">Canın tamamen yenilendi!</span>
+    <div class="card">
+        <h2>Eski Türkçe Sözlük</h2>
+        <div class="runic">Göktürkçe / Uygurca</div>
+        <h1 id="word">BODUN</h1>
+        <p id="meaning">Anlamı: Halk, Millet</p>
+        <button onclick="learnNewWord()">Yeni Kelime Çek</button>
     </div>
 
-    <!-- Üst Bilgi Çubuğu -->
-    <div id="main-top-bar" class="top-bar">
-        <div class="left-actions">
-            <span id="back-arrow" class="back-btn" onclick="goBackToDashboard()">←</span>
-            <div class="stat level-indicator">🏆 <span id="user-display-level">Bölüm 1</span></div>
-        </div>
-        <div style="display: flex; gap: 8px;">
-            <div class="stat streak">🔥 <span id="streak-count">0</span></div>
-            <div class="stat lives">❤️ <span id="lives-count">3</span></div>
-        </div>
-    </div>
+    <!-- Bildirimlerin asla kaybolmayıp birikeceği konteyner -->
+    <div id="notification-area"></div>
 
-    <!-- 1. E-POSTA VE İSİM KAYIT EKRANI -->
-    <div id="screen-register" class="screen active">
-        <div style="margin-top: 40px; font-size: 5rem;">🐢</div>
-        <div class="qwertzio-title">Qwertzio</div>
-        <div class="subtitle">Eski Türkçe Öğrenme Serüveni</div>
-        
-        <div style="width: 100%; margin-top: 10px;">
-            <label style="font-weight: 700; color: var(--text); float: left; margin-left: 5px;">E-posta Adresi</label>
-            <input type="email" id="reg-email" placeholder="ornek@eposta.com">
-            
-            <label style="font-weight: 700; color: var(--text); float: left; margin-left: 5px; margin-top: 10px;">Adınız Soyadınız</label>
-            <input type="text" id="reg-name" placeholder="Bilge Kağan">
-        </div>
-        
-        <button class="btn-green" style="margin-top: 25px;" onclick="handleRegistration()">Maceraya Başla</button>
-    </div>
-
-    <!-- 2. ANA DERECELİ YOL HARİTASI (DASHBOARD) -->
-    <div id="screen-dashboard" class="screen">
-        <h3 id="welcome-banner" style="text-align: center; margin-top: 10px; width: 100%;">Esenlikler!</h3>
-        <p style="color: var(--gray-text); font-weight: 600; margin: 0 0 15px 0; font-size: 0.9rem; text-align: center;">Öğrenmek istediğin bilge bölümünü seç:</p>
-        
-        <!-- Can Dolma Zaman Uyarısı -->
-        <div id="dashboard-timer-warning" class="timer-warning">
-            ⚠️ Can tükenmiş! Yeni can dolumuna kalan: <span id="dashboard-time-left">10:00</span>
-        </div>
-
-        <!-- 10 Adet Duolingo Tarzı Zigzag Buton -->
-        <div class="path-container" id="nodes-path-container">
-            <!-- JavaScript tarafından dinamik doldurulacak -->
-        </div>
-    </div>
-
-    <!-- 3. INTERAKTIF QUIZ EKRANI -->
-    <div id="screen-quiz" class="screen">
-        <div class="quiz-header">
-            <div class="progress-container">
-                <div id="quiz-progress-bar" class="progress-bar"></div>
-            </div>
-            <span id="quiz-q-counter" style="font-weight: bold; color: var(--gray-text);">1/3</span>
-        </div>
-
-        <div id="quiz-question-text" class="question-title">Yükleniyor...</div>
-
-        <div id="quiz-options-wrapper" class="options-container">
-            <!-- Seçenekler dinamik yüklenecek -->
-        </div>
-    </div>
-
-    <!-- 4. BAŞARI & KASLI KAPLUMBAĞA İLTİFAT EKRANI -->
-    <div id="screen-success" class="screen">
-        <!-- İhtişamlı Kaslı Kaplumbağa SVG Tasarımı -->
-        <div class="turtle-badge-box">
-            <svg viewBox="0 0 100 100" width="100%" height="100%">
-                <circle cx="50" cy="50" r="45" fill="#58cc02" stroke="#46a302" stroke-width="3"/>
-                <!-- Kabuk Arka Planı -->
-                <path d="M 30,50 Q 50,20 70,50 Q 50,80 30,50" fill="#2d7e00"/>
-                <!-- Kollar (Kaslı Efekt) -->
-                <path d="M 25,45 Q 10,30 20,60" fill="#7be32b" stroke="#46a302" stroke-width="2"/>
-                <path d="M 75,45 Q 90,30 80,60" fill="#7be32b" stroke="#46a302" stroke-width="2"/>
-                <!-- Kafa -->
-                <circle cx="50" cy="25" r="12" fill="#7be32b" stroke="#46a302" stroke-width="2"/>
-                <!-- Havalı Gözlük -->
-                <rect x="42" y="21" width="7" height="5" rx="1" fill="#222"/>
-                <rect x="51" y="21" width="7" height="5" rx="1" fill="#222"/>
-                <line x1="49" y1="23" x2="51" y2="23" stroke="#222" stroke-width="2"/>
-                <!-- Kas Çizgileri -->
-                <path d="M 20,45 Q 15,40 18,50" stroke="#fff" stroke-width="1.5" fill="none"/>
-                <path d="M 80,45 Q 85,40 82,50" stroke="#fff" stroke-width="1.5" fill="none"/>
-                <!-- Karın Kasları Sembolize Baklava -->
-                <rect x="44" y="45" width="12" height="18" rx="2" fill="#ffc800"/>
-                <line x1="44" y1="54" x2="56" y2="54" stroke="#2d7e00" stroke-width="1"/>
-                <line x1="50" y1="45" x2="50" y2="63" stroke="#2d7e00" stroke-width="1"/>
-            </svg>
-        </div>
-
-        <h2 id="success-compliment" style="color: var(--primary); font-weight: 900; text-align: center; padding: 0 10px;">Harikasın!</h2>
-        <p id="success-subtext" style="color: var(--text); font-weight: 600; text-align: center; margin-bottom: 30px;">Eski Türkler seninle gurur duyuyor.</p>
-
-        <button class="btn-green" id="success-next-btn" onclick="advanceAfterSuccess()">Sıradaki Bölüme Geç</button>
-    </div>
-
-    <!-- 5. 10 BÖLÜM BİTTİĞİNDE GÖSTERİLECEK FİNAL EKRANI -->
-    <div id="screen-final" class="screen">
-        <div style="font-size: 5rem; margin-top: 30px;">👑</div>
-        <h2 style="color: var(--gold); font-weight: 900;">Ulu Bilge Mertebesi!</h2>
-        <p id="final-screen-username" style="font-weight: bold; font-size: 1.2rem; margin: 10px 0;"></p>
-        <p style="text-align: center; line-height: 1.6; color: var(--text); padding: 0 15px;">
-            Müthiş yeteneğin sayesinde mevcut tüm Orhun Yazıtı seviyelerini eksiksiz tamamladın ve gerçek bir Göktürk Alp'i oldun!
-        </p>
-        
-        <div style="background: var(--gray-light); padding: 20px; border-radius: 20px; border: 2px dashed var(--primary); margin: 20px 0; width: 100%;">
-            <h3 style="color: var(--primary); margin-top: 0; font-size: 1.2rem;">🚀 DEVAMI GELECEK!</h3>
-            <p style="margin: 0; font-size: 0.95rem; color: #555;">Yeni Göktürkçe metinler, gelişmiş AI sesli diyalog modülleri ve rütbe güncellemeleri çok yakında bu ekranda olacak. Takipte kal!</p>
-        </div>
-
-        <button class="btn-blue" onclick="resetAppProgress()">En Baştan Tekrar Başla</button>
-    </div>
-
-    <!-- 6. AI MESAJLAŞMA VE SES PRATİĞİ EKRANI -->
-    <div id="screen-ai" class="screen">
-        <p style="color: var(--gray-text); font-weight: bold; font-size: 0.85rem; margin: 0 0 10px 0;">🤖 QWERTZIO YAPAY ZEKA SOHBET HOCASI</p>
-        
-        <div class="chat-box" id="ai-chat-messages">
-            <!-- Mesajlar buraya akacak -->
-        </div>
-
-        <div class="chat-footer">
-            <input type="text" id="chat-input-text" placeholder="Eski Türkçe veya Türkçe bir şey yazın..." style="margin: 0; flex: 1;">
-            <button class="btn-blue" style="margin: 0; width: auto; padding: 15px 20px;" onclick="sendTextMessage()">Gönder</button>
-            <div class="voice-btn-sim" onclick="simulateVoiceInput()" title="Ses Pratiği Yap">🎙️</div>
-        </div>
-    </div>
-
-    <!-- ALT SEKMELİ GEZİNME BARU (Webintoapp alt bar desteği için) -->
-    <div id="main-bottom-nav" class="bottom-nav">
-        <div class="nav-item active" id="nav-dash" onclick="switchTab('dash')">
-            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            <span>Dersler</span>
-        </div>
-        <div class="nav-item" id="nav-ai" onclick="switchTab('ai')">
-            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
-            <span>AI Sohbet</span>
-        </div>
-    </div>
-
-</div>
-
-<script>
-    // 10 BÖLÜMLÜK DETAYLI VERİ SETİ (Her bölümde tam 3 adet Duolingo Tarzı soru)
-    const LEVEL_DATA = [
-        {
-            title: "Gök Tengri İnancı",
-            questions: [
-                { q: '"Tengri" kelimesinin günümüz Türkçesindeki birincil anlamı nedir?', a: ["Tanrı / Gök", "Toprak", "Ateş"], kor: 0 },
-                { q: 'Eski Türk mitolojisinde çocukları ve hamile kadınları koruyan kutsal ana tanrıça kimdir?', a: ["Umay Ana", "Asena", "Ayızıt"], kor: 0 },
-                { q: '"Ödlek" kelimesi Orhun Yazıtlarında hangi soyut kavramı ifade eder?', a: ["Zaman / Kader", "Savaş Gücü", "Devlet Yapısı"], kor: 0 }
-            ]
-        },
-        {
-            title: "Kutlu Selamlaşmalar",
-            questions: [
-                { q: 'Eski Türkçede "sağlık, afiyet, esen kalın" anlamlarına gelen hitap hangisidir?', a: ["Esenle / Esenlikler", "Kurultay", "Töre"], kor: 0 },
-                { q: '"Yolunuz açık ve uğurlu olsun" temennisinin Eski Türkçedeki en doğru hali nedir?', a: ["Yoluñuz oñ bolsun", "Sü başı barsın", "Kutlug bol"], kor: 0 },
-                { q: 'Eski metinlerde sıkça geçen ve "iyi, güzel" anlamına gelen kelime hangisidir?', a: ["Edgü / Yaxşı", "Yavlak", "Yarıg"], kor: 0 }
-            ]
-        },
-        {
-            title: "Soy ve Aile Bağları",
-            questions: [
-                { q: 'Göktürk Yazıtlarında "Baba" kelimesinin karşılığı olarak hangi sözcük kullanılmıştır?', a: ["Kang", "Ög", "Oglan"], kor: 0 },
-                { q: 'Eski Türkçede bilge kişilerin ve annelerin saygınlığını belirten "Anne" kelimesi nedir?', a: ["Ög", "Hatun", "Kız"], kor: 0 },
-                { q: '"Bodun" kelimesi Eski Türk toplumsal yapısında neyi ifade ediyordu?', a: ["Millet / Halk", "Askeri Birlik", "Çadır Düzeni"], kor: 0 }
-            ]
-        },
-        {
-            title: "Yer-Sub (Doğa Unsurları)",
-            questions: [
-                { q: 'Eski Türk inancında kutsal sayılan "Sub" kelimesinin anlamı nedir?', a: ["Su", "Dağ", "Rüzgar"], kor: 0 },
-                { q: '"Kün" kelimesinin Eski Türkçe metinlerdeki anlamı nedir?', a: ["Güneş / Gün", "Gece / Ay", "Bulut"], kor: 0 },
-                { q: '"Yulduz" sözcüğü gökyüzündeki hangi unsuru simgeler?', a: ["Yıldız", "Kuyruklu Yıldız", "Şimşek"], kor: 0 }
-            ]
-        },
-        {
-            title: "Kutsal Hayvanlar Alemi",
-            questions: [
-                { q: 'Göktürklerin sancaklarında da kullandığı kutsal "Böri" hangi hayvandır?', a: ["Kurt", "Kartal", "Ayı"], kor: 0 },
-                { q: 'Eski Türk bozkır kültürünün en önemli binek hayvanı olan "Yund" nedir?', a: ["At", "Deve", "Geyik"], kor: 0 },
-                { q: 'Destanlarda gücü ve yırtıcılığıyla bilinen "Pars" kelimesinin Eski Türkçe aslı nedir?', a: ["Bars", "Kaplan", "Aslan"], kor: 0 }
-            ]
-        },
-        {
-            title: "Kağanlık ve Töre",
-            questions: [
-                { q: 'Eski Türk devletlerinde en yüksek rütbeye sahip hükümdara ne ad verilirdi?', a: ["Kağan", "Yabgu", "Şad"], kor: 0 },
-                { q: 'Devletin sarsılmaz hukuki kurallar bütününü ifade eden kelime hangisidir?', a: ["Töre", "Kurultay", "Bitig"], kor: 0 },
-                { q: 'Yazıtları kaleme alan, taşlara kazıyan kâtiplere/yazarlara ne ad verilirdi?', a: ["Bitigçi", "Kam", "Baksı"], kor: 0 }
-            ]
-        },
-        {
-            title: "Kutlu Alp ve Ordu (Sü)",
-            questions: [
-                { q: 'Eski Türk ordusunu ifade eden genel askeri terim hangisidir?', a: ["Sü / Çerig", "Ok-Yay", "Otag"], kor: 0 },
-                { q: 'Korkusuz, yiğit ve kahraman savaşçılara verilen unvan hangisidir?', a: ["Alp", "Tarkan", "Toygun"], kor: 0 },
-                { q: '"Yagı" kelimesi askeri stratejilerde kimleri ifade etmek için kullanılırdı?', a: ["Düşman", "Dost / Müttefik", "Öncü Birlik"], kor: 0 }
-            ]
-        },
-        {
-            title: "Eski Türkçe Sayılar",
-            questions: [
-                { q: '"Bir, Eki, Üç" diziliminden sonra gelen "Tört" sayısı kaçtır?', a: ["4", "5", "6"], kor: 0 },
-                { q: 'Orhun Yazıtlarında geçen "Biş" kelimesi hangi sayıyı belirtir?', a: ["5", "10", "50"], kor: 0 },
-                { q: '"Yegirmi" ifadesi Eski Türk aritmetiğinde hangi sayıya tekabül eder?', a: ["20", "30", "40"], kor: 0 }
-            ]
-        },
-        {
-            title: "Bilgelik ve Erdemler",
-            questions: [
-                { q: 'Devleti akılla yöneten, derin bilgi sahibi kişilere (Örn: Tonyukuk) ne unvan verilirdi?', a: ["Bilge", "Baksı", "Buyruk"], kor: 0 },
-                { q: 'Kıymetli mücevher, taş veya paha biçilemez değerleri anlatan kadim kelime hangisidir?', a: ["Erdini", "Yarık", "Kut"], kor: 0 },
-                { q: 'İnsanın içsel gücünü, yeteneğini ve ahlakını öven kavrama ne denirdi?', a: ["Erdem", "Tüz", "Kılınç"], kor: 0 }
-            ]
-        },
-        {
-            title: "Orhun Yazıtları Okumaları",
-            questions: [
-                { q: '"Türk Oguz Begleri, bodun, eşidiñ!" cümlesinde halka ne yapılması emrediliyor?', a: ["İşitin / Dinleyin", "Savaşın", "Göç Edin"], kor: 0 },
-                { q: '"Üze kök teñri asra yagız yer kılındukta..." cümlesindeki "yagız yer" neyi betimler?', a: ["Yağız / Kara Toprağı", "Mavi Gökyüzünü", "Yüksek Dağları"], kor: 0 },
-                { q: '"Közüm körgeli, biligim bilgilçe..." ibaresi ne anlama gelmektedir?', a: ["Gözüm görürken, bilgim ererken", "Gözüm görmez, aklım ermezken", "Zaman akıp giderken"], kor: 0 }
-            ]
-        }
-    ];
-
-    // Uygulama Durum Yönetimi (State)
-    let appState = {
-        userName: "",
-        userEmail: "",
-        currentLevel: 0,     // Kullanıcının şu an açık olan en yüksek seviyesi (0-9)
-        activeQuizLevel: 0,  // Şu an çözdüğü seviye
-        activeQuestionIdx: 0,// Şu an çözdüğü sorunun indeksi
-        lives: 3,
-        streak: 0,
-        lastLifeTimestamp: null
-    };
-
-    const TOTAL_LEVELS = LEVEL_DATA.length;
-    let lifeTimerInterval = null;
-
-    // UYGULAMA BAŞLANGICI VE LOCALSTORAGE KONTROLÜ
-    window.addEventListener('load', () => {
-        loadProgress();
-        renderPathNodes();
-        initLifeTimerLogic();
-        setupAIInitialMessages();
-    });
-
-    // İlerlemeyi Kaydetme ve Yükleme
-    function saveProgress() {
-        localStorage.setItem('qwertzio_state_v2', JSON.stringify(appState));
-    }
-
-    function loadProgress() {
-        const saved = localStorage.getItem('qwertzio_state_v2');
-        if (saved) {
-            try {
-                appState = JSON.parse(saved);
-                if (appState.userName) {
-                    document.getElementById('welcome-banner').innerText = `Esenlikler, ${appState.userName}!`;
-                    document.getElementById('user-display-level').innerText = `Bölüm ${appState.currentLevel + 1}`;
-                    document.getElementById('streak-count').innerText = appState.streak;
-                    document.getElementById('lives-count').innerText = appState.lives;
-                    
-                    // Doğrudan ana ekrana geçiş yap
-                    document.getElementById('screen-register').classList.remove('active');
-                    document.getElementById('screen-dashboard').classList.add('active');
-                    document.getElementById('main-bottom-nav').style.display = 'flex';
-                }
-            } catch(e) {
-                console.error("Kayıt yükleme hatası", e);
-            }
-        }
-    }
-
-    // 10 BÖLÜMLÜK HARİTAYI ÇİZME (Duolingo Tarzı)
-    function renderPathNodes() {
-        const container = document.getElementById('nodes-path-container');
-        container.innerHTML = "";
-
-        for (let i = 0; i < TOTAL_LEVELS; i++) {
-            const node = document.createElement('div');
-            const isUnlocked = i <= appState.currentLevel;
-            
-            node.className = `level-node ${isUnlocked ? 'unlocked' : 'locked'}`;
-            node.innerHTML = isUnlocked ? (i + 1) : "🔒";
-            
-            // Küçük bilgi baloncuğu
-            const tooltip = document.createElement('div');
-            tooltip.className = 'tooltip';
-            tooltip.innerText = LEVEL_DATA[i].title;
-            node.appendChild(tooltip);
-
-            if (isUnlocked) {
-                node.onclick = () => launchQuiz(i);
-            } else {
-                node.onclick = () => showToast(`🔒 Bu bölüme geçmek için önceki bölümleri bitirmelisin!`);
-            }
-
-            container.appendChild(node);
-        }
-    }
-
-    // TOAST BİLDİRİM SİSTEMİ
-    function showToast(text, emoji = "🐢") {
-        const toast = document.getElementById('notification-toast');
-        document.getElementById('toast-text').innerText = text;
-        toast.querySelector('span').innerText = emoji;
-        toast.classList.add('show');
-        
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3500);
-    }
-
-    // KAYIT OLMA FONKSİYONU
-    function handleRegistration() {
-        const email = document.getElementById('reg-email').value.trim();
-        const name = document.getElementById('reg-name').value.trim();
-
-        if (!email || !name) {
-            alert("Lütfen uygulamanın hitap edebilmesi için e-posta ve adınızı girin!");
-            return;
-        }
-
-        appState.userEmail = email;
-        appState.userName = name.split(' ')[0]; // Samimi hitap için ilk ad
-        appState.currentLevel = 0;
-        appState.lives = 3;
-        appState.streak = 0;
-        appState.lastLifeTimestamp = null;
-        
-        saveProgress();
-
-        document.getElementById('welcome-banner').innerText = `Esenlikler, ${appState.userName}!`;
-        document.getElementById('user-display-level').innerText = `Bölüm 1`;
-        document.getElementById('streak-count').innerText = appState.streak;
-        document.getElementById('lives-count').innerText = appState.lives;
-
-        // Ekranları değiştir
-        document.getElementById('screen-register').classList.remove('active');
-        document.getElementById('screen-dashboard').classList.add('active');
-        document.getElementById('main-bottom-nav').style.display = 'flex';
-        
-        showToast(`Qwertzio dünyasına hoş geldin, ${appState.userName}!`, "💪");
-        renderPathNodes();
-    }
-
-    // DERSE / QUIZ'E BAŞLAMA
-    function launchQuiz(levelIdx) {
-        if (appState.lives <= 0) {
-            showToast("⚠️ Canın yok! Yenilenmesini bekle veya pratik yap.", "❤️");
-            return;
-        }
-
-        appState.activeQuizLevel = levelIdx;
-        appState.activeQuestionIdx = 0;
-        
-        document.getElementById('back-arrow').style.display = 'block';
-        document.getElementById('user-display-level').innerText = `Bölüm ${levelIdx + 1}`;
-        
-        switchScreen('screen-quiz');
-        loadQuestion();
-    }
-
-    // SORUYU EKRANA YÜKLEME
-    function loadQuestion() {
-        const lvl = LEVEL_DATA[appState.activeQuizLevel];
-        const qData = lvl.questions[appState.activeQuestionIdx];
-        
-        // İlerleme Çubuğu Güncelleme
-        const totalQ = lvl.questions.length;
-        const progressPercent = (appState.activeQuestionIdx / totalQ) * 100;
-        document.getElementById('quiz-progress-bar').style.width = `${progressPercent}%`;
-        document.getElementById('quiz-q-counter').innerText = `${appState.activeQuestionIdx + 1}/${totalQ}`;
-
-        // Soru metni
-        document.getElementById('quiz-question-text').innerText = qData.q;
-
-        // Seçenekleri Karıştırarak veya sıralı basma
-        const wrapper = document.getElementById('quiz-options-wrapper');
-        wrapper.innerHTML = "";
-
-        qData.a.forEach((optText, index) => {
-            const card = document.createElement('div');
-            card.className = 'option-card';
-            card.innerText = optText;
-            card.onclick = () => verifyUserAnswer(index === qData.kor);
-            wrapper.appendChild(card);
-        });
-    }
-
-    // CEVAP KONTROLÜ
-    function verifyUserAnswer(isCorrect) {
-        const lvl = LEVEL_DATA[appState.activeQuizLevel];
-        
-        if (isCorrect) {
-            appState.activeQuestionIdx++;
-            if (appState.activeQuestionIdx >= lvl.questions.length) {
-                // Bölüm Tamamen Bitti!
-                handleLevelCompletion();
-            } else {
-                showToast("Doğru Cevap! İlerliyorsun.", "✨");
-                loadQuestion();
-            }
-        } else {
-            // Yanlış Cevap, Can Kaybı
-            appState.lives--;
-            if (appState.lives < 0) appState.lives = 0;
-            
-            document.getElementById('lives-count').innerText = appState.lives;
-            
-            // Zamanlayıcıyı tetikle gerekiyorsa
-            if (appState.lives < 3 && !appState.lastLifeTimestamp) {
-                appState.lastLifeTimestamp = Date.now();
-            }
-            saveProgress();
-            
-            showToast("Yanlış cevap! Bir can kaybettin.", "😢");
-
-            if (appState.lives <= 0) {
-                setTimeout(() => {
-                    goBackToDashboard();
-                    showToast("Canın bitti! 10 Dakika sonra dolacak.", "❤️");
-                }, 1000);
-            }
-        }
-    }
-
-    // BÖLÜM BİTİNCE KASLI KAPLUMBAĞA EKRANI
-    function handleLevelCompletion() {
-        appState.streak++;
-        document.getElementById('streak-count').innerText = appState.streak;
-
-        // Eğer biten bölüm, kullanıcının ulaştığı en son bölümse bir sonrakini aç
-        if (appState.activeQuizLevel === appState.currentLevel) {
-            appState.currentLevel++;
-        }
-        
-        saveProgress();
-        renderPathNodes();
-
-        // İltifat listesi özelleştirme
-        const compliments = [
-            `Müthişsin ${appState.userName}! Kasların Bilge Kağan kadar güçlü! 💪`,
-            `Harika iş ${appState.userName}! Eski Türkler seninle gurur duyardı! 🏹`,
-            `Bileğine kuvvet ${appState.userName}! Yazıtları tekte çözdün! 🐢`,
-            `Tam bir Bozkır Alperenisin ${appState.userName}! Muazzam başarı! 🔥`
+    <script>
+        // Eski Türkçe kelime havuzu
+        const words = [
+            { word: "TENGİRİ", meaning: "Gökyüzü, Tanrı" },
+            { word: "SÜ", meaning: "Asker, Ordu" },
+            { word: "YALAVAÇ", meaning: "Elçi, Haberci" },
+            { word: "TİGİN", meaning: "Prens, Hükümdar Oğlu" },
+            { word: "BİTİG", meaning: "Yazı, Kitap, Belge" },
+            { word: "KAM", meaning: "Şaman, Büyücü, Doktor" },
+            { word: "YARLIG", meaning: "Emir, Ferman" },
+            { word: "TUDUN", meaning: "Vergi Memuru, Vali" }
         ];
-        const randomCompliment = compliments[Math.floor(Math.random() * compliments.length)];
-        
-        document.getElementById('success-compliment').innerText = randomCompliment;
-        
-        if (appState.currentLevel >= TOTAL_LEVELS) {
-            // 10 Bölümün tamamı bitti!
-            document.getElementById('success-next-btn').innerText = "Sonucu Gör 🏆";
-            document.getElementById('success-next-btn').onclick = () => {
-                document.getElementById('final-screen-username').innerText = `Tebrikler ${appState.userName}!`;
-                switchScreen('screen-final');
-            };
-        } else {
-            document.getElementById('success-next-btn').innerText = "Sıradaki Bölüme Geç";
-            document.getElementById('success-next-btn').onclick = () => advanceAfterSuccess();
+
+        function learnNewWord() {
+            // Rastgele kelime seçimi
+            const randomObj = words[Math.floor(Math.random() * words.length)];
+
+            // Ana kartı güncelle
+            document.getElementById('word').innerText = randomObj.word;
+            document.getElementById('meaning').innerText = "Anlamı: " + randomObj.meaning;
+
+            // Kaybolmayan bildirim oluştur
+            createPersistentNotification(`Yeni Kelime Eklendi: ${randomObj.word} - ${randomObj.meaning}`);
         }
 
-        switchScreen('screen-success');
-    }
-
-    // BAŞARIDAN SONRA DEVAM ETME
-    function advanceAfterSuccess() {
-        goBackToDashboard();
-    }
-
-    // GERİ DÖNÜŞLER
-    function goBackToDashboard() {
-        document.getElementById('back-arrow').style.display = 'none';
-        document.getElementById('user-display-level').innerText = `Bölüm ${appState.currentLevel + 1}`;
-        switchScreen('screen-dashboard');
-    }
-
-    // EKRAN DEĞİŞTİRME YARDIMCISI
-    function switchScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(screenId).classList.add('active');
-    }
-
-    // ALT SEKME GEÇİŞLERİ (Dersler - AI Sohbet)
-    function switchTab(tabName) {
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        if (tabName === 'dash') {
-            document.getElementById('nav-dash').classList.add('active');
-            goBackToDashboard();
-        } else if (tabName === 'ai') {
-            document.getElementById('nav-ai').classList.add('active');
-            document.getElementById('back-arrow').style.display = 'none';
-            document.getElementById('user-display-level').innerText = "AI Pratik";
-            switchScreen('screen-ai');
-        }
-    }
-
-    // CAN DOLMA VE ZAMANLAYICI MANTIĞI (Webintoapp Kapatılıp Açılsa Bile Doğru Çalışır)
-    function initLifeTimerLogic() {
-        if (lifeTimerInterval) clearInterval(lifeTimerInterval);
-
-        lifeTimerInterval = setInterval(() => {
-            if (appState.lives < 3 && appState.lastLifeTimestamp) {
-                const elapsedMs = Date.now() - appState.lastLifeTimestamp;
-                const cooldownMs = 10 * 60 * 1000; // 10 Dakika = 600000 ms
-
-                if (elapsedMs >= cooldownMs) {
-                    // Can ekle
-                    appState.lives++;
-                    document.getElementById('lives-count').innerText = appState.lives;
-                    
-                    if (appState.lives >= 3) {
-                        appState.lastLifeTimestamp = null;
-                        document.getElementById('dashboard-timer-warning').style.display = 'none';
-                        showToast("❤️ Canın tamamen doldu! Öğrenmeye tam gaz devam!", "✨");
-                    } else {
-                        // Bir can doldu ama hala eksik var, zamanlayıcıyı güncelle
-                        appState.lastLifeTimestamp = Date.now();
-                        showToast("❤️ 1 Can kazanıldı! Diğeri doluyor...", "✨");
-                    }
-                    saveProgress();
-                } else {
-                    // Kalan süreyi göster
-                    const remainingSec = Math.ceil((cooldownMs - elapsedMs) / 1000);
-                    const mins = Math.floor(remainingSec / 60);
-                    const secs = remainingSec % 60;
-                    const formattedTime = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-                    
-                    document.getElementById('dashboard-timer-warning').style.display = 'block';
-                    document.getElementById('dashboard-time-left').innerText = formattedTime;
-                }
-            } else {
-                document.getElementById('dashboard-timer-warning').style.display = 'none';
-            }
-        }, 1000);
-    }
-
-    // SIFIRLAMA
-    function resetAppProgress() {
-        if (confirm("Tüm ilerlemeni sıfırlamak ve 1. Bölümden başlamak istediğine emin misin?")) {
-            localStorage.removeItem('qwertzio_state_v2');
-            appState.currentLevel = 0;
-            appState.lives = 3;
-            appState.streak = 0;
-            appState.lastLifeTimestamp = null;
-            saveProgress();
-            window.location.reload();
-        }
-    }
-
-    // --- AI SOHBET VE SES PRATİĞİ SİMÜLASYONU ---
-    function setupAIInitialMessages() {
-        const chatBox = document.getElementById('ai-chat-messages');
-        chatBox.innerHTML = `
-            <div class="msg ai"><b>Qwertzio AI:</b> Esenlikler! Ben senin Eski Türkçe ses ve mesaj öğretmeninim. Bana Türkçe bir kelime sor veya konuşalım!</div>
-            <div class="msg ai"><i>İpucu: "Merhaba", "Kurt ne demek?" veya "Bölüm 1 yardımı" yazabilirsin.</i></div>
-        `;
-    }
-
-    function sendTextMessage() {
-        const input = document.getElementById('chat-input-text');
-        const text = input.value.trim();
-        if (!text) return;
-
-        appendMessage(text, 'user');
-        input.value = "";
-
-        // AI Yanıt Simülasyonu
-        setTimeout(() => {
-            let reply = `Anladım ${appState.userName}! Eski Türkçe öğrenme gayretini takdir ediyorum. Bu kelimenin Göktürk yazıtlarındaki kökenlerini incelemelisin. Kutlu günler dilerim! 🐢`;
+        function createPersistentNotification(message) {
+            const area = document.getElementById('notification-area');
             
-            const lowerText = text.toLowerCase();
-            if (lowerText.includes("merhaba") || lowerText.includes("selam")) {
-                reply = `Esenlikler ${appState.userName}! "Esenle" veya "Möngü" kutlu selamlar getirdin. Bugün hangi bilge yazıtını çalışıyoruz?`;
-            } else if (lowerText.includes("kurt")) {
-                reply = `Ooo! Göktürklerin kutsal sembolü: <b>"Böri"</b> demektir ${appState.userName}. Kurt başı sancaklarda heybetle dalgalanırdı.`;
-            } else if (lowerText.includes("su")) {
-                reply = `Eski Türkçede su <b>"Sub"</b> olarak geçer. "Yer-Sub" kutsal ruhları doğayı temsil eder.`;
-            } else if (lowerText.includes("tanrı")) {
-                reply = `Ulu kutsallık! Eski Türkçe karşılığı <b>"Tengri"</b> veya <b>"Gök Tengri"</b>'dir.`;
-            }
+            // Yeni bildirim elementi oluştur
+            const notif = document.createElement('div');
+            notif.className = 'notification';
+            notif.innerHTML = `<strong>Kayıt:</strong> ${message}`;
 
-            appendMessage(`<b>Qwertzio AI:</b> ${reply}`, 'ai');
-        }, 1000);
-    }
+            // En üste ekle (yeni öğrenilen hep üstte çıksın)
+            area.prepend(notif);
 
-    function appendMessage(htmlContent, sender) {
-        const chatBox = document.getElementById('ai-chat-messages');
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `msg ${sender}`;
-        msgDiv.innerHTML = htmlContent;
-        chatBox.appendChild(msgDiv);
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function simulateVoiceInput() {
-        showToast("🎙️ Mikrofon Dinleniyor... Konuşun.", "🔴");
-        setTimeout(() => {
-            const randomUserPhrases = [
-                "Esenlikler Qwertzio hoca",
-                "Gök Tengri inancı nedir",
-                "Böri ne anlama gelir"
-            ];
-            const spoken = randomUserPhrases[Math.floor(Math.random() * randomUserPhrases.length)];
-            appendMessage(`<i>🎙️ Sesli Okundu: "${spoken}"</i>`, 'user');
-            
+            // 3 Saniye sonra DOM'dan SİLME, sadece 'faded' class'ı ekleyip soluklaştır
             setTimeout(() => {
-                appendMessage(`<b>Qwertzio AI (Sesli Yanıt):</b> Harika telaffuz ${appState.userName}! Ses frekansın tam bir Göktürk savaşçısı gibi net ve bilgece geliyor. 🐢`, 'ai');
-            }, 1000);
-        }, 2000);
-    }
-</script>
+                notif.classList.add('faded');
+            }, 3000);
+        }
+    </script>
 
 </body>
 </html>
