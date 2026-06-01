@@ -69,6 +69,7 @@
         #screen-register {
             top: 0;
             z-index: 100;
+            justify-content: center;
         }
 
         .screen.active { 
@@ -231,39 +232,12 @@
         }
         @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 
-        .chat-box {
-            width: 100%; flex: 1; border: 2px solid var(--gray-border); border-radius: 16px;
-            background: #fafafa; margin-bottom: 15px; padding: 15px; display: flex;
-            flex-direction: column; gap: 10px; overflow-y: auto;
-        }
-        .msg { max-width: 80%; padding: 12px 16px; border-radius: 16px; font-size: 0.95rem; line-height: 1.4; word-wrap: break-word; }
-        .msg.ai { background: #fff; align-self: flex-start; border: 2px solid var(--gray-border); border-top-left-radius: 0; }
-        .msg.user { background: var(--secondary); color: white; align-self: flex-end; border-top-right-radius: 0; }
-        .chat-footer { width: 100%; display: flex; gap: 10px; align-items: center; }
-        .voice-btn-sim {
-            background: #ff4b4b; color: white; border-radius: 50%; width: 55px; height: 55px;
-            display: flex; justify-content: center; align-items: center; font-size: 1.5rem;
-            cursor: pointer; box-shadow: 0 4px 0 #ea2b2b;
-        }
-        .voice-btn-sim:active { transform: translateY(3px); box-shadow: 0 1px 0 #ea2b2b; }
-
         .timer-warning {
             color: var(--danger); font-weight: 700; margin: 10px 0; font-size: 0.9rem;
             background: #ffebeb; padding: 8px 16px; border-radius: 12px; display: none;
         }
 
-        .bottom-nav {
-            width: 100%; height: 65px; border-top: 2px solid var(--gray-border);
-            background: #fff; display: none; justify-content: space-around; align-items: center; z-index: 90;
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center; font-size: 0.8rem;
-            font-weight: 700; color: var(--gray-text); cursor: pointer; gap: 3px;
-        }
-        .nav-item.active { color: var(--primary); }
-        .nav-item svg { width: 24px; height: 24px; fill: currentColor; }
-
-        /* YENİ MEKANİK: BİLDİRİM ARŞİVİ (Komple Kaybolmayan Bildirimler) */
+        /* Bildirim Alanı */
         #notification-area {
             position: absolute;
             top: 70px;
@@ -275,7 +249,7 @@
             z-index: 200;
             max-height: calc(100% - 150px);
             overflow-y: auto;
-            pointer-events: none; /* Tıklamaları engellemesin diye */
+            pointer-events: none;
         }
         #notification-area::-webkit-scrollbar { width: 0px; }
 
@@ -290,33 +264,44 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: opacity 0.8s ease, transform 0.3s ease;
-            pointer-events: auto; /* Kendisine tıklanabilsin */
+            transition: opacity 0.5s ease, transform 0.3s ease;
+            pointer-events: auto;
             animation: slideIn 0.3s forwards;
         }
         @keyframes slideIn {
             from { transform: translateX(120%); }
             to { transform: translateX(0); }
         }
+        .persistent-toast.faded { opacity: 0; }
 
-        /* Soluklaşma Mekaniği */
-        .persistent-toast.faded {
-            opacity: 0.25;
-        }
-        /* Üzerine gelince tekrar netleşir */
-        .persistent-toast.faded:hover {
-            opacity: 1;
-            transform: scale(1.05);
-            z-index: 10;
+        .auth-switch {
+            color: var(--secondary); font-weight: 700; cursor: pointer; text-decoration: underline; margin-top: 15px;
         }
 
+        .teaching-card {
+            background: #fff8e1;
+            border: 3px solid var(--gold);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            width: 100%;
+            margin-top: 40px;
+            box-shadow: 0 6px 0 var(--gold);
+        }
+        .teaching-title { font-size: 1.2rem; color: #d4a000; font-weight: bold; margin-bottom: 10px; }
+        .teaching-text { font-size: 1.8rem; font-weight: 900; color: #333; line-height: 1.4; }
+
+        .speaker-btn {
+            background: none; border: none; font-size: 2rem; cursor: pointer; 
+            margin: 10px auto; display: block; box-shadow: none; width: auto; color: #58cc02;
+        }
+        .speaker-btn:active { transform: scale(0.9); box-shadow: none; }
     </style>
 </head>
 <body>
 
 <div id="app">
     
-    <!-- Bildirimlerin Birikeceği Sabit Alan -->
     <div id="notification-area"></div>
 
     <div id="main-top-bar" class="top-bar">
@@ -330,21 +315,25 @@
         </div>
     </div>
 
-    <!-- 1. KAYIT EKRANI -->
+    <!-- 1. GİRİŞ / KAYIT EKRANI -->
     <div id="screen-register" class="screen active">
-        <div style="margin-top: 40px; font-size: 5rem;">⛺</div>
+        <div style="font-size: 5rem;">⛺</div>
         <div class="qwertzio-title">Qwertzio</div>
-        <div class="subtitle">Eski Anadolu Türkçesi & Destansı Hitabet<br><small>(Kısaltmasız, Öz Türkçe)</small></div>
+        <div class="subtitle">Eski Anadolu Türkçesi & Destansı Hitabet</div>
         
         <div style="width: 100%; margin-top: 10px;">
-            <label style="font-weight: 700; color: var(--text); float: left; margin-left: 5px;">E-posta Adresi</label>
-            <input type="email" id="reg-email" placeholder="ornek@eposta.com">
+            <label style="font-weight: 700; color: var(--text); float: left; margin-left: 5px;">Geçerli E-posta Adresi</label>
+            <input type="email" id="reg-email" placeholder="gercek@eposta.com">
             
-            <label style="font-weight: 700; color: var(--text); float: left; margin-left: 5px; margin-top: 10px;">Adınız Soyadınız</label>
-            <input type="text" id="reg-name" placeholder="Ertuğrul Gazi">
+            <div id="name-field-container">
+                <label style="font-weight: 700; color: var(--text); float: left; margin-left: 5px; margin-top: 10px;">Adınız Soyadınız</label>
+                <input type="text" id="reg-name" placeholder="Ertuğrul Gazi">
+            </div>
         </div>
         
-        <button class="btn-green" style="margin-top: 25px;" onclick="handleRegistration()">Toyu Başlat</button>
+        <button class="btn-green" id="auth-btn" style="margin-top: 25px;" onclick="handleAuth()">Toyu Başlat (Kayıt Ol)</button>
+        
+        <div class="auth-switch" id="auth-switch-text" onclick="toggleAuthMode()">Zaten obalı mısın? Giriş Yap</div>
     </div>
 
     <!-- 2. DASHBOARD -->
@@ -359,7 +348,22 @@
         <div class="path-container" id="nodes-path-container"></div>
     </div>
 
-    <!-- 3. QUIZ EKRANI -->
+    <!-- 3. ÖĞRETİ EKRANI -->
+    <div id="screen-teaching" class="screen">
+        <div class="quiz-header">
+            <span style="font-weight: bold; color: var(--gray-text);">Yeni Bilgi!</span>
+        </div>
+        
+        <div class="teaching-card">
+            <div class="teaching-title">Bunu Belliyesin:</div>
+            <div class="teaching-text" id="teaching-content-text">Yükleniyor...</div>
+            <button class="speaker-btn" onclick="replayTeachingVoice()">🔊</button>
+        </div>
+
+        <button class="btn-blue" style="margin-top: auto;" onclick="proceedToQuestion()">Belleğime Kazıdım (Devam)</button>
+    </div>
+
+    <!-- 4. QUIZ EKRANI -->
     <div id="screen-quiz" class="screen">
         <div class="quiz-header">
             <div class="progress-container">
@@ -367,15 +371,16 @@
             </div>
             <span id="quiz-q-counter" style="font-weight: bold; color: var(--gray-text);">1/3</span>
         </div>
+        <button class="speaker-btn" onclick="replayQuestionVoice()">🔊</button>
         <div id="quiz-question-text" class="question-title">Yükleniyor...</div>
         <div id="quiz-options-wrapper" class="options-container"></div>
     </div>
 
-    <!-- 4. BAŞARI EKRANI -->
+    <!-- 5. BAŞARI EKRANI -->
     <div id="screen-success" class="screen">
         <div class="turtle-badge-box">
+            <!-- Maskot Kaplumbağa -->
             <svg viewBox="0 0 100 100" width="100%" height="100%">
-                <!-- Kaplumbağa yerine burada bir Alp başlığı çizebiliriz ama nostalji için kaslı kaplumbağayı koruduk -->
                 <circle cx="50" cy="50" r="45" fill="#58cc02" stroke="#46a302" stroke-width="3"/>
                 <path d="M 30,50 Q 50,20 70,50 Q 50,80 30,50" fill="#2d7e00"/>
                 <path d="M 25,45 Q 10,30 20,60" fill="#7be32b" stroke="#46a302" stroke-width="2"/>
@@ -398,7 +403,7 @@
         <button class="btn-green" id="success-next-btn" onclick="advanceAfterSuccess()">Sıradaki Bölüme Geç</button>
     </div>
 
-    <!-- 5. FİNAL EKRANI -->
+    <!-- 6. FİNAL EKRANI -->
     <div id="screen-final" class="screen">
         <div style="font-size: 5rem; margin-top: 30px;">👑</div>
         <h2 style="color: var(--gold); font-weight: 900;">Ulu Bey Mertebesi!</h2>
@@ -409,113 +414,88 @@
         <button class="btn-blue" onclick="resetAppProgress()">Destana Tekrar Başla</button>
     </div>
 
-    <!-- 6. AI MESAJLAŞMA -->
-    <div id="screen-ai" class="screen">
-        <p style="color: var(--gray-text); font-weight: bold; font-size: 0.85rem; margin: 0 0 10px 0;">👳‍♂️ BİLGE OZAN AI</p>
-        
-        <div class="chat-box" id="ai-chat-messages"></div>
-
-        <div class="chat-footer">
-            <input type="text" id="chat-input-text" placeholder="Kelam et beyim..." style="margin: 0; flex: 1;">
-            <button class="btn-blue" style="margin: 0; width: auto; padding: 15px 20px;" onclick="sendTextMessage()">Yolla</button>
-            <div class="voice-btn-sim" onclick="simulateVoiceInput()" title="Ses Pratiği Yap">🎙️</div>
-        </div>
-    </div>
-
-    <div id="main-bottom-nav" class="bottom-nav">
-        <div class="nav-item active" id="nav-dash" onclick="switchTab('dash')">
-            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            <span>Dersler</span>
-        </div>
-        <div class="nav-item" id="nav-ai" onclick="switchTab('ai')">
-            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
-            <span>Bilge Ozan</span>
-        </div>
-    </div>
-
 </div>
 
 <script>
-    // --- YENİ MÜFREDAT: DİRİLİŞ/KURULUŞ TARZI ESKİ ANADOLU TÜRKÇESİ ---
     const LEVEL_DATA = [
         {
             title: "Gündelik Kelamlar",
             questions: [
-                { q: '"Nasılsın?" cümlesinin eski ve destansı söylenişi hangisidir?', a: ["Ahvalin nicedir?", "Neylersin?", "Ne haldesin?"], kor: 0 },
-                { q: '"Onun adı Oğuzdu" cümlesini kısaltma yapmadan nasıl kurarız?', a: ["Lakabı Oğuz idi", "Oğuz derler", "Adı Oğuz durur"], kor: 0 },
-                { q: '"Teşekkür ederim, anladım" manasında yiğitçe kullanılan tabir hangisidir?', a: ["Eyvallah beyim", "Sağ olasın", "Bildim"], kor: 0 }
+                { teaching: "Nasılsın? = Ahvalin nicedir?", q: '"Nasılsın?" cümlesinin eski ve destansı söylenişi hangisidir?', a: ["Ahvalin nicedir?", "Neylersin?", "Ne haldesin?"], kor: 0 },
+                { teaching: "Onun adı Oğuzdu = Lakabı Oğuz idi", q: '"Onun adı Oğuzdu" cümlesini kısaltma yapmadan nasıl kurarız?', a: ["Lakabı Oğuz idi", "Oğuz derler", "Adı Oğuz durur"], kor: 0 },
+                { teaching: "Teşekkür ederim, anladım = Eyvallah beyim", q: '"Teşekkür ederim, anladım" manasında yiğitçe kullanılan tabir hangisidir?', a: ["Eyvallah beyim", "Sağ olasın", "Bildim"], kor: 0 }
             ]
         },
         {
             title: "Cenk ve Meydan",
             questions: [
-                { q: 'Kılıç, kalkan, gürz gibi savaş aletlerinin genel adı nedir?', a: ["Pusat", "Zırh", "Silah"], kor: 0 },
-                { q: '"Savaş başladı" cümlesinin eski dildeki en doğru karşılığı nedir?', a: ["Cenk başlamış idi", "Kavga çıktı", "Dövüş koptu"], kor: 0 },
-                { q: 'Obanın yetiştirdiği cesur ve korkusuz savaşçılara ne ad verilir?', a: ["Alp / Alperen", "Nöker", "Levent"], kor: 0 }
+                { teaching: "Silah = Pusat", q: 'Kılıç, kalkan, gürz gibi savaş aletlerinin genel adı nedir?', a: ["Pusat", "Zırh", "Silah"], kor: 0 },
+                { teaching: "Savaş başladı = Cenk başlamış idi", q: '"Savaş başladı" cümlesinin eski dildeki en doğru karşılığı nedir?', a: ["Cenk başlamış idi", "Kavga çıktı", "Dövüş koptu"], kor: 0 },
+                { teaching: "Asker / Cesur Savaşçı = Alp / Alperen", q: 'Obanın yetiştirdiği cesur ve korkusuz savaşçılara ne ad verilir?', a: ["Alp / Alperen", "Nöker", "Levent"], kor: 0 }
             ]
         },
         {
             title: "Otağ ve Obanın Yüreği",
             questions: [
-                { q: 'Beylerin ailesiyle yaşadığı, kararlar aldığı büyük çadıra ne denir?', a: ["Otağ", "Çerge", "Kıl Çadır"], kor: 0 },
-                { q: 'Obada önemli kararların alındığı meclis toplantısına ne ad verilir?', a: ["Toy / Divan", "Kurultay", "Şenlik"], kor: 0 },
-                { q: 'Beyin eşine veya obanın saygıdeğer hanımına nasıl hitap edilir?', a: ["Hatun", "Sultan", "Bacı"], kor: 0 }
+                { teaching: "Büyük Çadır = Otağ", q: 'Beylerin ailesiyle yaşadığı, kararlar aldığı büyük çadıra ne denir?', a: ["Otağ", "Çerge", "Kıl Çadır"], kor: 0 },
+                { teaching: "Meclis Toplantısı = Toy / Divan", q: 'Obada önemli kararların alındığı meclis toplantısına ne ad verilir?', a: ["Toy / Divan", "Kurultay", "Şenlik"], kor: 0 },
+                { teaching: "Beyin Eşi / Hanımefendi = Hatun", q: 'Beyin eşine veya obanın saygıdeğer hanımına nasıl hitap edilir?', a: ["Hatun", "Sultan", "Bacı"], kor: 0 }
             ]
         },
         {
             title: "İhanet ve Hiddet",
             questions: [
-                { q: 'Dost görünüp ihanet eden kişiye ne diye hitap edilir?', a: ["Gafil / Yezit", "Korkak", "Zalim"], kor: 0 },
-                { q: '"Çok sinirlendi" durumunu en iyi hangi tabir anlatır?', a: ["Hiddetinden küplere bindi", "Öfkesi arşa vardı", "Gazaba geldi"], kor: 0 },
-                { q: '"O yalan söylüyordu" cümlesinin arkaik hali nasıldır?', a: ["Kelamı yalan imiş", "Yalan diyordu", "Sözü yanlıştı"], kor: 0 }
+                { teaching: "Hain / Düşman = Gafil / Yezit", q: 'Dost görünüp ihanet eden kişiye ne diye hitap edilir?', a: ["Gafil / Yezit", "Korkak", "Zalim"], kor: 0 },
+                { teaching: "Çok sinirlendi = Hiddetinden küplere bindi", q: '"Çok sinirlendi" durumunu en iyi hangi tabir anlatır?', a: ["Hiddetinden küplere bindi", "Öfkesi arşa vardı", "Gazaba geldi"], kor: 0 },
+                { teaching: "O yalan söylüyordu = Kelamı yalan imiş", q: '"O yalan söylüyordu" cümlesinin arkaik hali nasıldır?', a: ["Kelamı yalan imiş", "Yalan diyordu", "Sözü yanlıştı"], kor: 0 }
             ]
         },
         {
             title: "Veda ve Helallik",
             questions: [
-                { q: 'Saygıdeğer birinin "öldüğünü" belirtmek için hangi tabir kullanılır?', a: ["Hakk\'a yürüdü", "Can verdi", "Göçtü"], kor: 0 },
-                { q: 'Uzağa giden birine "kendine iyi bak" demek yerine ne söylenir?', a: ["Allah\'a emanet olasın", "Yolun açık olsun", "Dikkat eyle"], kor: 0 },
-                { q: 'Ölüm tehlikesi öncesi Alplerin birbirinden istediği şey nedir?', a: ["Hakkını helal eyle", "Beni unutma", "Kılıcımı al"], kor: 0 }
+                { teaching: "Öldü / Vefat Etti = Hakk'a yürüdü", q: 'Saygıdeğer birinin "öldüğünü" belirtmek için hangi tabir kullanılır?', a: ["Hakk'a yürüdü", "Can verdi", "Göçtü"], kor: 0 },
+                { teaching: "Kendine iyi bak = Allah'a emanet olasın", q: 'Uzağa giden birine "kendine iyi bak" demek yerine ne söylenir?', a: ["Allah'a emanet olasın", "Yolun açık olsun", "Dikkat eyle"], kor: 0 },
+                { teaching: "Beni Affet = Hakkını helal eyle", q: 'Ölüm tehlikesi öncesi Alplerin birbirinden istediği şey nedir?', a: ["Hakkını helal eyle", "Beni unutma", "Kılıcımı al"], kor: 0 }
             ]
         },
         {
             title: "Tasvir ve Anlatım",
             questions: [
-                { q: '"Çok güzeldir" yerine dönemin üslubuna uygun nasıl denir?', a: ["Pek güzel durur", "Güzelliği şaşırtır", "Hoş görünür"], kor: 0 },
-                { q: '"Gece vakti gelmişti" cümlesinin arkaik ve tam hali nasıldır?', a: ["Vakit geceye dönmüş idi", "Gece oldu", "Karanlık bastı"], kor: 0 },
-                { q: 'Önemli bir haberi veya sırrı taşıyan kişiye ne denir?', a: ["Ulak / Haberci", "Elçi", "Casus"], kor: 0 }
+                { teaching: "Çok güzeldir = Pek güzel durur", q: '"Çok güzeldir" yerine dönemin üslubuna uygun nasıl denir?', a: ["Pek güzel durur", "Güzelliği şaşırtır", "Hoş görünür"], kor: 0 },
+                { teaching: "Gece oldu = Vakit geceye dönmüş idi", q: '"Gece vakti gelmişti" cümlesinin arkaik ve tam hali nasıldır?', a: ["Vakit geceye dönmüş idi", "Gece oldu", "Karanlık bastı"], kor: 0 },
+                { teaching: "Haberci = Ulak", q: 'Önemli bir haberi veya sırrı taşıyan kişiye ne denir?', a: ["Ulak", "Elçi", "Casus"], kor: 0 }
             ]
         },
         {
             title: "Sadakat ve Yiğitlik",
             questions: [
-                { q: '"O çok cesurdu" cümlesi kısaltma olmadan nasıl yazılır?', a: ["Yüreği pek cesur idi", "Korkusuzdu", "Yiğit adamdı"], kor: 0 },
-                { q: 'Sözünden dönmeyen, beyine itaat eden kişinin vasfı nedir?', a: ["Sadakat", "Cesaret", "Kuvvet"], kor: 0 },
-                { q: 'Ertuğrul Gazi\'nin sıkça kullandığı, adaleti simgeleyen kılıç ismi nedir?', a: ["Zülfikar (Tasvir olarak)", "Pusat", "Yatağan"], kor: 0 }
+                { teaching: "O çok cesurdu = Yüreği pek cesur idi", q: '"O çok cesurdu" cümlesi kısaltma olmadan nasıl yazılır?', a: ["Yüreği pek cesur idi", "Korkusuzdu", "Yiğit adamdı"], kor: 0 },
+                { teaching: "Sözünden Dönmemek = Sadakat", q: 'Sözünden dönmeyen, beyine itaat eden kişinin vasfı nedir?', a: ["Sadakat", "Cesaret", "Kuvvet"], kor: 0 },
+                { teaching: "Kılıç / Adalet Sembolü = Pusat", q: 'Ertuğrul Gazi\'nin sıkça kullandığı, adaleti simgeleyen genel kelam nedir?', a: ["Pusat", "Zülfikar", "Yatağan"], kor: 0 }
             ]
         },
         {
             title: "Oba Düzeni",
             questions: [
-                { q: 'Obanın kadınlarının kilim dokuyup iş yaptığı yere ne denir?', a: ["Kilimhane", "Aşhane", "Demirhane"], kor: 0 },
-                { q: 'Pusatların dövüldüğü, kılıçların yapıldığı ocak neresidir?', a: ["Demirci Ocağı", "Bileyhane", "Dökümhane"], kor: 0 },
-                { q: 'Obanın şifa dağıtan, otlardan ilaç yapan hekimine ne denir?', a: ["Şifacı / Otacı", "Doktor", "Bilge"], kor: 0 }
+                { teaching: "İş/Dokuma Yeri = Kilimhane", q: 'Obanın kadınlarının kilim dokuyup iş yaptığı yere ne denir?', a: ["Kilimhane", "Aşhane", "Demirhane"], kor: 0 },
+                { teaching: "Silah Üretim Yeri = Demirci Ocağı", q: 'Pusatların dövüldüğü, kılıçların yapıldığı ocak neresidir?', a: ["Demirci Ocağı", "Bileyhane", "Dökümhane"], kor: 0 },
+                { teaching: "Hekim / Doktor = Şifacı / Otacı", q: 'Obanın şifa dağıtan, otlardan ilaç yapan hekimine ne denir?', a: ["Şifacı / Otacı", "Doktor", "Bilge"], kor: 0 }
             ]
         },
         {
             title: "Düşman Taktikleri",
             questions: [
-                { q: 'Düşmana saldırmak için dağda bayırda kurulan gizli tuzağa ne denir?', a: ["Pusu / Kapan", "Oyun", "Hile"], kor: 0 },
-                { q: '"Kale kuşatılmıştı" cümlesinin arkaik tam hali nedir?', a: ["Hisar muhasara edilmiş idi", "Kale sarıldı", "Kapıya dayandılar"], kor: 0 },
-                { q: 'Bizans veya Haçlı ordularından olan düşman askerine ne denir?', a: ["Kefere / Tekfurun İti", "Yabancı", "Zalim"], kor: 0 }
+                { teaching: "Gizli Tuzak = Pusu / Kapan", q: 'Düşmana saldırmak için dağda bayırda kurulan gizli tuzağa ne denir?', a: ["Pusu / Kapan", "Oyun", "Hile"], kor: 0 },
+                { teaching: "Kale kuşatıldı = Hisar muhasara edilmiş idi", q: '"Kale kuşatılmıştı" cümlesinin arkaik tam hali nedir?', a: ["Hisar muhasara edilmiş idi", "Kale sarıldı", "Kapıya dayandılar"], kor: 0 },
+                { teaching: "Düşman Askeri = Kefere / Tekfurun İti", q: 'Bizans veya Haçlı ordularından olan düşman askerine ne denir?', a: ["Kefere / Tekfurun İti", "Yabancı", "Zalim"], kor: 0 }
             ]
         },
         {
             title: "Destansı Kapanış",
             questions: [
-                { q: '"Bu topraklar bizimdir" cümlesinin beylik vizyonuyla söylenişi nasıldır?', a: ["Bu yurt, atalarımızın kanıyla sulanmış mülkümüzdür", "Burası bizim obadır", "Buralar bize aittir"], kor: 0 },
-                { q: 'Zor zamanlarda Alplerin umudunu diri tutan o meşhur kelam nedir?', a: ["Gecenin en karanlık anı, şafağa en yakın zamandır", "Sabreden derviş muradına ermiş", "Gün doğmadan neler doğar"], kor: 0 },
-                { q: 'Devletin bekası için söylenen kutlu dua nedir?', a: ["Devlet-i Ebed Müddet var olsun!", "Çok yaşa beyim!", "Oba yıkılmasın!"], kor: 0 }
+                { teaching: "Burası bizimdir = Bu yurt, atalarımızın kanıyla sulanmış mülkümüzdür", q: '"Bu topraklar bizimdir" cümlesinin beylik vizyonuyla söylenişi nasıldır?', a: ["Bu yurt, atalarımızın kanıyla sulanmış mülkümüzdür", "Burası bizim obadır", "Buralar bize aittir"], kor: 0 },
+                { teaching: "Umudunu yitirme = Gecenin en karanlık anı, şafağa en yakın zamandır", q: 'Zor zamanlarda Alplerin umudunu diri tutan o meşhur kelam nedir?', a: ["Gecenin en karanlık anı, şafağa en yakın zamandır", "Sabreden derviş muradına ermiş", "Gün doğmadan neler doğar"], kor: 0 },
+                { teaching: "Devlet Yaşasın = Devlet-i Ebed Müddet var olsun!", q: 'Devletin bekası için söylenen kutlu dua nedir?', a: ["Devlet-i Ebed Müddet var olsun!", "Çok yaşa beyim!", "Oba yıkılmasın!"], kor: 0 }
             ]
         }
     ];
@@ -525,31 +505,93 @@
         activeQuizLevel: 0, activeQuestionIdx: 0, lives: 3, streak: 0, lastLifeTimestamp: null
     };
 
+    let allUsers = {};
+    let isLoginMode = false;
+    let currentShuffledOptions = [];
+    let currentVoiceText = "";
+    
     const TOTAL_LEVELS = LEVEL_DATA.length;
     let lifeTimerInterval = null;
 
     window.addEventListener('load', () => {
-        loadProgress(); renderPathNodes(); initLifeTimerLogic(); setupAIInitialMessages();
+        const storedUsers = localStorage.getItem('qwertzio_users');
+        if (storedUsers) allUsers = JSON.parse(storedUsers);
+        
+        const currentUserEmail = localStorage.getItem('qwertzio_current_user');
+        if (currentUserEmail && allUsers[currentUserEmail]) {
+            appState = allUsers[currentUserEmail];
+            loadDashboard();
+        }
+        initLifeTimerLogic();
     });
 
-    function saveProgress() { localStorage.setItem('qwertzio_dirilis', JSON.stringify(appState)); }
-
-    function loadProgress() {
-        const saved = localStorage.getItem('qwertzio_dirilis');
-        if (saved) {
-            try {
-                appState = JSON.parse(saved);
-                if (appState.userName) {
-                    document.getElementById('welcome-banner').innerText = `Sefalar Getirdin, ${appState.userName}!`;
-                    document.getElementById('user-display-level').innerText = `Bölüm ${appState.currentLevel + 1}`;
-                    document.getElementById('streak-count').innerText = appState.streak;
-                    document.getElementById('lives-count').innerText = appState.lives;
-                    document.getElementById('screen-register').classList.remove('active');
-                    document.getElementById('screen-dashboard').classList.add('active');
-                    document.getElementById('main-bottom-nav').style.display = 'flex';
-                }
-            } catch(e) {}
+    function saveProgress() {
+        if(appState.userEmail) {
+            allUsers[appState.userEmail] = appState;
+            localStorage.setItem('qwertzio_users', JSON.stringify(allUsers));
+            localStorage.setItem('qwertzio_current_user', appState.userEmail);
         }
+    }
+
+    function toggleAuthMode() {
+        isLoginMode = !isLoginMode;
+        if(isLoginMode) {
+            document.getElementById('name-field-container').style.display = 'none';
+            document.getElementById('auth-btn').innerText = "Giriş Yap";
+            document.getElementById('auth-switch-text').innerText = "Obalı değil misin? Kayıt Ol";
+        } else {
+            document.getElementById('name-field-container').style.display = 'block';
+            document.getElementById('auth-btn').innerText = "Toyu Başlat (Kayıt Ol)";
+            document.getElementById('auth-switch-text').innerText = "Zaten obalı mısın? Giriş Yap";
+        }
+    }
+
+    function handleAuth() {
+        const email = document.getElementById('reg-email').value.trim().toLowerCase();
+        
+        // E-posta doğrulama (Regex)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert("Gerçek ve geçerli bir e-posta adresi giriniz beyim!");
+            return;
+        }
+
+        if (isLoginMode) {
+            if (allUsers[email]) {
+                appState = allUsers[email];
+                saveProgress();
+                showPersistentToast(`Tekrar hoş geldin ${appState.userName} Bey!`, "⚔️");
+                loadDashboard();
+            } else {
+                alert("Bu e-posta ile kayıtlı bir obalı bulunamadı!");
+            }
+        } else {
+            const name = document.getElementById('reg-name').value.trim();
+            if (!name) { alert("Obaya girmek için adını bahşetmelisin!"); return; }
+            if (allUsers[email]) {
+                alert("Bu e-posta zaten kullanımda! Lütfen giriş yapın."); return;
+            }
+
+            appState.userEmail = email; 
+            appState.userName = name.split(' ')[0];
+            appState.currentLevel = 0; appState.lives = 3; 
+            appState.streak = 0; appState.lastLifeTimestamp = null;
+            saveProgress();
+            
+            showPersistentToast(`Kayı Obasına hoş geldin, ${appState.userName} Bey!`, "⚔️");
+            loadDashboard();
+        }
+    }
+
+    function loadDashboard() {
+        document.getElementById('welcome-banner').innerText = `Sefalar Getirdin, ${appState.userName}!`;
+        document.getElementById('user-display-level').innerText = `Bölüm ${appState.currentLevel + 1}`;
+        document.getElementById('streak-count').innerText = appState.streak;
+        document.getElementById('lives-count').innerText = appState.lives;
+        
+        document.getElementById('screen-register').classList.remove('active');
+        document.getElementById('screen-dashboard').classList.add('active');
+        renderPathNodes();
     }
 
     function renderPathNodes() {
@@ -573,46 +615,33 @@
         }
     }
 
-    // YENİ MEKANİK: BİLDİRİMLER KOMPLE KAYBOLMUYOR
+    // Bildirim mekanizması: Belirli süre sonra DOM'dan tamamen kalkar
     function showPersistentToast(text, emoji = "⛺") {
         const area = document.getElementById('notification-area');
-        
-        // Yeni bildirim elementi
         const toast = document.createElement('div');
         toast.className = 'persistent-toast';
         toast.innerHTML = `<span>${emoji}</span> <span>${text}</span>`;
-        
-        // En üste ekle
         area.prepend(toast);
 
-        // 3 Saniye sonra DOM'dan SİLME, sadece 'faded' class'ı ekleyip soluklaştır.
-        // Üzerine fare gelince tekrar netleşecek (CSS ile).
+        // 3.5 saniye sonra tamamen yok et
         setTimeout(() => {
             toast.classList.add('faded');
-        }, 3000);
+            setTimeout(() => {
+                if(toast.parentElement) toast.remove();
+            }, 500);
+        }, 3500);
     }
 
-    function handleRegistration() {
-        const email = document.getElementById('reg-email').value.trim();
-        const name = document.getElementById('reg-name').value.trim();
-
-        if (!email || !name) { alert("Obaya girmek için adını bahşetmelisin!"); return; }
-
-        appState.userEmail = email; appState.userName = name.split(' ')[0];
-        appState.currentLevel = 0; appState.lives = 3; appState.streak = 0; appState.lastLifeTimestamp = null;
-        saveProgress();
-
-        document.getElementById('welcome-banner').innerText = `Sefalar Getirdin, ${appState.userName}!`;
-        document.getElementById('user-display-level').innerText = `Bölüm 1`;
-        document.getElementById('streak-count').innerText = appState.streak;
-        document.getElementById('lives-count').innerText = appState.lives;
-
-        document.getElementById('screen-register').classList.remove('active');
-        document.getElementById('screen-dashboard').classList.add('active');
-        document.getElementById('main-bottom-nav').style.display = 'flex';
-        
-        showPersistentToast(`Kayı Obasına hoş geldin, ${appState.userName} Bey!`, "⚔️");
-        renderPathNodes();
+    // Kalın Osmanlı Padişahı Sesi Okuma (TTS)
+    function speakSultan(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            let utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'tr-TR';
+            utterance.pitch = 0.1; // Çok kalın ses
+            utterance.rate = 0.8;  // Yavaş tempolu
+            window.speechSynthesis.speak(utterance);
+        }
     }
 
     function launchQuiz(levelIdx) {
@@ -620,34 +649,78 @@
         appState.activeQuizLevel = levelIdx; appState.activeQuestionIdx = 0;
         document.getElementById('back-arrow').style.display = 'block';
         document.getElementById('user-display-level').innerText = `Bölüm ${levelIdx + 1}`;
-        switchScreen('screen-quiz'); loadQuestion();
+        loadTeaching();
+    }
+
+    function loadTeaching() {
+        const lvl = LEVEL_DATA[appState.activeQuizLevel];
+        const qData = lvl.questions[appState.activeQuestionIdx];
+        
+        document.getElementById('teaching-content-text').innerText = qData.teaching;
+        switchScreen('screen-teaching');
+        
+        // Seslendir
+        speakSultan(qData.teaching);
+    }
+
+    function replayTeachingVoice() {
+        const lvl = LEVEL_DATA[appState.activeQuizLevel];
+        speakSultan(lvl.questions[appState.activeQuestionIdx].teaching);
+    }
+
+    function proceedToQuestion() {
+        window.speechSynthesis.cancel();
+        switchScreen('screen-quiz');
+        loadQuestion();
     }
 
     function loadQuestion() {
         const lvl = LEVEL_DATA[appState.activeQuizLevel];
         const qData = lvl.questions[appState.activeQuestionIdx];
-        
         const totalQ = lvl.questions.length;
+        
         document.getElementById('quiz-progress-bar').style.width = `${(appState.activeQuestionIdx / totalQ) * 100}%`;
         document.getElementById('quiz-q-counter').innerText = `${appState.activeQuestionIdx + 1}/${totalQ}`;
         document.getElementById('quiz-question-text').innerText = qData.q;
 
+        // Şıkları karıştırma mantığı
+        let optionsObj = qData.a.map((text, idx) => ({ text, isCorrect: idx === qData.kor }));
+        optionsObj.sort(() => Math.random() - 0.5);
+        currentShuffledOptions = optionsObj;
+
         const wrapper = document.getElementById('quiz-options-wrapper');
         wrapper.innerHTML = "";
-        qData.a.forEach((optText, index) => {
+        
+        let voiceOptionsStr = "";
+
+        optionsObj.forEach((opt, index) => {
             const card = document.createElement('div');
-            card.className = 'option-card'; card.innerText = optText;
-            card.onclick = () => verifyUserAnswer(index === qData.kor);
+            card.className = 'option-card'; card.innerText = opt.text;
+            card.onclick = () => verifyUserAnswer(opt.isCorrect);
             wrapper.appendChild(card);
+            
+            voiceOptionsStr += `${index + 1}inci şık: ${opt.text}. `;
         });
+
+        currentVoiceText = `Soru: ${qData.q} Şıklar: ${voiceOptionsStr}`;
+        speakSultan(currentVoiceText);
+    }
+
+    function replayQuestionVoice() {
+        speakSultan(currentVoiceText);
     }
 
     function verifyUserAnswer(isCorrect) {
+        window.speechSynthesis.cancel();
         const lvl = LEVEL_DATA[appState.activeQuizLevel];
+        
         if (isCorrect) {
             appState.activeQuestionIdx++;
             if (appState.activeQuestionIdx >= lvl.questions.length) { handleLevelCompletion(); } 
-            else { showPersistentToast("Doğru bildin! Yürü yiğidim.", "✨"); loadQuestion(); }
+            else { 
+                showPersistentToast("Doğru bildin! Yürü yiğidim.", "✨"); 
+                loadTeaching(); // Sonraki sorunun önce öğretisi gelecek
+            }
         } else {
             appState.lives--; if (appState.lives < 0) appState.lives = 0;
             document.getElementById('lives-count').innerText = appState.lives;
@@ -658,6 +731,9 @@
 
             if (appState.lives <= 0) {
                 setTimeout(() => { goBackToDashboard(); showPersistentToast("Canın bitti! 10 Dakika sonra dolacak.", "❤️"); }, 1000);
+            } else {
+                // Yanlış cevap verdiğinde aynı sorunun öğretisini tekrar göstererek başa saralım.
+                loadTeaching();
             }
         }
     }
@@ -684,12 +760,18 @@
             document.getElementById('success-next-btn').innerText = "Sıradaki Bölüme Geç";
             document.getElementById('success-next-btn').onclick = () => advanceAfterSuccess();
         }
+        
+        speakSultan("Bileğine kuvvet! Toyu başarıyla geçtin.");
         switchScreen('screen-success');
     }
 
-    function advanceAfterSuccess() { goBackToDashboard(); }
+    function advanceAfterSuccess() { 
+        window.speechSynthesis.cancel();
+        goBackToDashboard(); 
+    }
 
     function goBackToDashboard() {
+        window.speechSynthesis.cancel();
         document.getElementById('back-arrow').style.display = 'none';
         document.getElementById('user-display-level').innerText = `Bölüm ${appState.currentLevel + 1}`;
         switchScreen('screen-dashboard');
@@ -698,18 +780,6 @@
     function switchScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
-    }
-
-    function switchTab(tabName) {
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        if (tabName === 'dash') {
-            document.getElementById('nav-dash').classList.add('active'); goBackToDashboard();
-        } else if (tabName === 'ai') {
-            document.getElementById('nav-ai').classList.add('active');
-            document.getElementById('back-arrow').style.display = 'none';
-            document.getElementById('user-display-level').innerText = "Bilge Ozan";
-            switchScreen('screen-ai');
-        }
     }
 
     function initLifeTimerLogic() {
@@ -741,61 +811,11 @@
 
     function resetAppProgress() {
         if (confirm("Tüm ilerlemeni sıfırlamak istediğine emin misin beyim?")) {
-            localStorage.removeItem('qwertzio_dirilis'); location.reload();
+            delete allUsers[appState.userEmail];
+            localStorage.setItem('qwertzio_users', JSON.stringify(allUsers));
+            localStorage.removeItem('qwertzio_current_user');
+            location.reload();
         }
-    }
-
-    // --- BİLGE OZAN AI ---
-    function setupAIInitialMessages() {
-        const chatBox = document.getElementById('ai-chat-messages');
-        chatBox.innerHTML = `
-            <div class="msg ai"><b>Bilge Ozan AI:</b> Esenlikler beyim! Ben obanın Bilge Ozanıyım. Bana bir kelam et ki sana arkaik dilde yanıt vereyim.</div>
-            <div class="msg ai"><i>İpucu: "Silah ne demek?", "Nasılsın", "Savaş" yazabilirsin.</i></div>
-        `;
-    }
-
-    function sendTextMessage() {
-        const input = document.getElementById('chat-input-text');
-        const text = input.value.trim();
-        if (!text) return;
-        appendMessage(text, 'user'); input.value = "";
-
-        setTimeout(() => {
-            let reply = `Eyvallah ${appState.userName}! Kelamını işittim. Cümlelerin boylara, soylara destan olsun.`;
-            const lowerText = text.toLowerCase();
-            
-            if (lowerText.includes("merhaba") || lowerText.includes("selam")) {
-                reply = `Sefalar getirdin ${appState.userName} Bey! Ahvalin nicedir, obada işler yolunda mıdır?`;
-            } else if (lowerText.includes("silah")) {
-                reply = `Silah deme yiğidim, <b>"Pusat"</b> de! Pusatın keskin, yüreğin kavi olsun.`;
-            } else if (lowerText.includes("çadır")) {
-                reply = `Beyler çadırda değil, <b>"Otağ"</b>da kalır. Otağın direği sağlam imiş!`;
-            } else if (lowerText.includes("asker")) {
-                reply = `Obamızın yiğitlerine asker değil, <b>"Alp"</b> veya <b>"Nöker"</b> deriz beyim.`;
-            }
-
-            appendMessage(`<b>Bilge Ozan AI:</b> ${reply}`, 'ai');
-        }, 1000);
-    }
-
-    function appendMessage(htmlContent, sender) {
-        const chatBox = document.getElementById('ai-chat-messages');
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `msg ${sender}`; msgDiv.innerHTML = htmlContent;
-        chatBox.appendChild(msgDiv); chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function simulateVoiceInput() {
-        showPersistentToast("🎙️ Ozan seni dinler... Konuş beyim.", "🔴");
-        setTimeout(() => {
-            const randomUserPhrases = ["Ahvalin nicedir Ozan", "Pusatımı getirin", "Cenk vaktidir"];
-            const spoken = randomUserPhrases[Math.floor(Math.random() * randomUserPhrases.length)];
-            appendMessage(`<i>🎙️ Sesli Okundu: "${spoken}"</i>`, 'user');
-            
-            setTimeout(() => {
-                appendMessage(`<b>Bilge Ozan AI (Sesli):</b> Maşallah ${appState.userName}! Avazın koca dağları titreten bir aslan gibi gür çıkmış idi. 🏹`, 'ai');
-            }, 1000);
-        }, 2000);
     }
 </script>
 
