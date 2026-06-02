@@ -151,6 +151,8 @@
         <div style="display: flex; gap: 8px;">
             <div class="stat streak">🔥 <span id="streak-count">0</span></div>
             <div class="stat lives">❤️ <span id="lives-count">5</span></div>
+            <!-- LAPTOP / OPERATÖR MODU BUTONU -->
+            <div class="stat" style="cursor:pointer;" onclick="toggleOperatorMode()" title="Operatör Modu">💻</div>
         </div>
     </div>
 
@@ -418,7 +420,11 @@
     let appState = {
         userName: "", platform: "", currentLevel: 0,
         activeQuizLevel: 0, activeQuestionIdx: 0, lives: 5, streak: 0, 
-        lastLifeTimestamp: null, promptedPWA: false
+        lastLifeTimestamp: null, promptedPWA: false,
+        // Operatör mod parametreleri
+        operatorModeActive: false,
+        savedCurrentLevel: 0,
+        savedLives: 5
     };
 
     let currentVoiceText = "";
@@ -431,6 +437,12 @@
             appState = JSON.parse(storedUser);
             // Mevcut kullanıcılar için yeni bölüm uyumluluğu kontrolü
             if(appState.currentLevel >= LEVEL_DATA.length) appState.currentLevel = LEVEL_DATA.length - 1;
+            
+            // Eğer daha eski bir kayıtsa eksik state parametrelerini tanımla
+            if(appState.operatorModeActive === undefined) appState.operatorModeActive = false;
+            if(appState.savedCurrentLevel === undefined) appState.savedCurrentLevel = appState.currentLevel;
+            if(appState.savedLives === undefined) appState.savedLives = appState.lives;
+
             loadDashboard();
         }
         initLifeTimerLogic();
@@ -438,6 +450,45 @@
 
     function saveProgress() {
         localStorage.setItem('qwertzio_user_data', JSON.stringify(appState));
+    }
+
+    function toggleOperatorMode() {
+        const pass = prompt("Operatör şifresini giriniz:");
+        if (pass === "5546") {
+            if (!appState.operatorModeActive) {
+                appState.operatorModeActive = true;
+                // Oyunun asıl durumunu sakla
+                appState.savedCurrentLevel = appState.currentLevel;
+                appState.savedLives = appState.lives;
+                
+                // Hileleri aktif et
+                appState.currentLevel = LEVEL_DATA.length - 1; // Tüm bölümleri aç
+                appState.lives = "∞"; // Sonsuz can
+                
+                document.getElementById('lives-count').innerText = appState.lives;
+                renderPathNodes();
+                saveProgress();
+                showPersistentToast("Operatör mod aktif!", "💻");
+            } else {
+                showPersistentToast("Operatör mod zaten aktif!", "⚠️");
+            }
+        } else if (pass === "4655") {
+            if (appState.operatorModeActive) {
+                appState.operatorModeActive = false;
+                // Oyunun asıl durumunu geri yükle
+                appState.currentLevel = appState.savedCurrentLevel !== undefined ? appState.savedCurrentLevel : 0;
+                appState.lives = appState.savedLives !== undefined ? appState.savedLives : 5;
+                
+                document.getElementById('lives-count').innerText = appState.lives;
+                renderPathNodes();
+                saveProgress();
+                showPersistentToast("Operatör mod kapatıldı.", "💻");
+            } else {
+                showPersistentToast("Operatör mod zaten kapalı!", "⚠️");
+            }
+        } else if (pass !== null) {
+            showPersistentToast("Hatalı şifre!", "❌");
+        }
     }
 
     function selectPlatform(plat) {
@@ -454,6 +505,7 @@
         appState.userName = name.split(' ')[0];
         appState.currentLevel = 0; appState.lives = 5; 
         appState.streak = 0; appState.lastLifeTimestamp = null; appState.promptedPWA = false;
+        appState.operatorModeActive = false; appState.savedCurrentLevel = 0; appState.savedLives = 5;
         saveProgress();
         
         showPersistentToast(`Kayı Obasına hoş geldin, ${appState.userName} Bey!`, "⛺");
@@ -514,7 +566,10 @@
     }
 
     function launchQuiz(levelIdx) {
-        if (appState.lives <= 0) { showPersistentToast("⚠️ Canın yok! Biraz dinlen yiğidim.", "❤️"); return; }
+        if (!appState.operatorModeActive && appState.lives <= 0) { 
+            showPersistentToast("⚠️ Canın yok! Biraz dinlen yiğidim.", "❤️"); 
+            return; 
+        }
         appState.activeQuizLevel = levelIdx; appState.activeQuestionIdx = 0;
         document.getElementById('back-arrow').style.display = 'block';
         document.getElementById('user-display-level').innerText = `B. ${levelIdx + 1}`;
@@ -675,14 +730,23 @@
             appState.activeQuestionIdx++;
             setTimeout(processNextStep, 800);
         } else {
-            appState.lives--; if (appState.lives < 0) appState.lives = 0;
-            document.getElementById('lives-count').innerText = appState.lives;
-            if (appState.lives < 5 && !appState.lastLifeTimestamp) appState.lastLifeTimestamp = Date.now();
-            saveProgress();
+            // Operatör Modunda değilse can düşür
+            if (!appState.operatorModeActive) {
+                appState.lives--; if (appState.lives < 0) appState.lives = 0;
+                document.getElementById('lives-count').innerText = appState.lives;
+                if (appState.lives < 5 && !appState.lastLifeTimestamp) appState.lastLifeTimestamp = Date.now();
+                saveProgress();
+            }
             
-            if(!customMessage) showPersistentToast("Yanlış! Bir can eksildi.", "😢");
+            if(!customMessage) {
+                if (appState.operatorModeActive) {
+                    showPersistentToast("Yanlış! Ama operatör korumasındasın.", "🛡️");
+                } else {
+                    showPersistentToast("Yanlış! Bir can eksildi.", "😢");
+                }
+            }
 
-            if (appState.lives <= 0) {
+            if (!appState.operatorModeActive && appState.lives <= 0) {
                 setTimeout(() => { goBackToDashboard(); showPersistentToast("Canın bitti! 30 Saniye bekle.", "❤️"); }, 1000);
             }
         }
@@ -692,8 +756,15 @@
         appState.streak++; document.getElementById('streak-count').innerText = appState.streak;
         
         // Eğer bitirilen seviye en son açılan seviyeyse yenisini aç (toplam sınırına kadar)
-        if (appState.activeQuizLevel === appState.currentLevel && appState.currentLevel < LEVEL_DATA.length - 1) {
-            appState.currentLevel++;
+        if (appState.operatorModeActive) {
+            // Operatör modundayken asıl ilerlememizi de kaydetmeye devam edelim (eğer en son kaldığı yeri geçerse)
+            if (appState.activeQuizLevel === appState.savedCurrentLevel && appState.savedCurrentLevel < LEVEL_DATA.length - 1) {
+                appState.savedCurrentLevel++;
+            }
+        } else {
+            if (appState.activeQuizLevel === appState.currentLevel && appState.currentLevel < LEVEL_DATA.length - 1) {
+                appState.currentLevel++;
+            }
         }
         
         saveProgress(); renderPathNodes();
@@ -733,6 +804,11 @@
     function initLifeTimerLogic() {
         if (lifeTimerInterval) clearInterval(lifeTimerInterval);
         lifeTimerInterval = setInterval(() => {
+            if (appState.operatorModeActive) {
+                document.getElementById('dashboard-timer-warning').style.display = 'none';
+                return;
+            }
+
             if (appState.lives < 5 && appState.lastLifeTimestamp) {
                 const elapsedMs = Date.now() - appState.lastLifeTimestamp;
                 const cooldownMs = 30 * 1000; 
