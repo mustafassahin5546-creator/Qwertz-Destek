@@ -1,2 +1,1 @@
-# Qwertz-Destek
-destek sayfam. 
+# Qwertzio
