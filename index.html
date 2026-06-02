@@ -40,7 +40,6 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.15);
         }
 
-        /* Ekran Yapıları - Alt kısıma padding eklendi (Telefonlarda Chrome vb. dışına taşmaması için) */
         .screen { 
             display: none; flex: 1; padding: 20px; padding-bottom: 80px; 
             flex-direction: column; align-items: center; overflow-y: auto;
@@ -51,7 +50,6 @@
         #screen-register { top: 0; z-index: 100; justify-content: center; }
         .screen.active { display: flex; }
 
-        /* Üst Bilgi Barı */
         .top-bar { 
             position: absolute; top: 0; left: 0; width: 100%; height: 60px;
             padding: 0 20px; display: flex; justify-content: space-between; 
@@ -92,7 +90,6 @@
         .btn-blue { background-color: var(--secondary); box-shadow: 0 5px 0 var(--secondary-dark); }
         .btn-blue:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--secondary-dark); }
 
-        /* Platform Seçimi Butonları */
         .platform-btn { background: #fff; color: var(--text); border: 2px solid var(--gray-border); box-shadow: 0 4px 0 var(--gray-border); text-transform: none;}
         .platform-btn.selected { border-color: var(--secondary); background: #e3f2fd; box-shadow: 0 4px 0 var(--secondary-dark); }
 
@@ -115,7 +112,6 @@
         .option-card { background: white; border: 2px solid var(--gray-border); border-radius: 16px; padding: 16px; font-size: 1.1rem; font-weight: 600; cursor: pointer; box-shadow: 0 3px 0 var(--gray-border); }
         .option-card:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--gray-border); }
 
-        /* Eşleştirme Sistemi CSS */
         .match-container { display: flex; gap: 10px; width: 100%; }
         .match-col { flex: 1; display: flex; flex-direction: column; gap: 10px; }
         .match-btn { background: white; border: 2px solid var(--gray-border); padding: 12px 5px; border-radius: 12px; text-transform: none; font-size: 0.95rem; font-weight: 600; color: var(--text); box-shadow: 0 3px 0 var(--gray-border); margin: 0;}
@@ -124,7 +120,6 @@
         .match-btn.error { background: #ffebeb; border-color: var(--danger); box-shadow: 0 3px 0 var(--danger); animation: shake 0.3s; }
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
 
-        /* Yazı Yazma Alanı CSS */
         .input-area { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
         .input-area textarea { width: 100%; height: 100px; padding: 15px; border: 2px solid var(--gray-border); border-radius: 16px; font-size: 1.1rem; outline: none; resize: none; }
         .input-area textarea:focus { border-color: var(--secondary); }
@@ -211,7 +206,6 @@
         <button class="speaker-btn" onclick="replayQuestionVoice()">🔊</button>
         <div id="quiz-question-text" class="question-title">Yükleniyor...</div>
         
-        <!-- Soru Tipleri İçin Alanlar -->
         <div id="quiz-options-wrapper" class="options-container"></div>
         <div id="quiz-match-wrapper" class="match-container" style="display: none;"></div>
         <div id="quiz-input-wrapper" class="input-area" style="display: none;">
@@ -230,28 +224,59 @@
 </div>
 
 <script>
-    // ÖZEL MÜFREDAT (İlk 3 bölüm birbirine bağlandı, farklı soru tipleri kullanıldı)
+    // 21 BÖLÜMLÜK DEV MÜFREDAT
     const LEVEL_DATA = [
+        // --- GEÇMİŞ ZAMAN (2 BÖLÜM) ---
         {
-            title: "Geçmiş Zaman: 'İdi'",
+            title: "Geçmiş Zaman 1: 'İdi'",
             questions: [
                 { type: "teaching", text: "Bizim obada geçmiş zaman ekleri (-dı, -di) kelimenin sonuna yapışmaz! Kelimeyi söyler, ardından 'idi' deriz.\n\nÖrnek:\nGüzeldi ❌\nGüzel idi ✅" },
                 { type: "choice", q: "'O çok cesurdu' cümlesinin destansı ve doğru söylenişi nedir?", a: ["Yüreği pek cesur idi", "Korkusuzdu", "Cesurdu derler"], kor: 0 },
-                { type: "match", q: "Modern kelimeleri, destansı halleriyle eşleştir:", pairs: [{m:"Nasılsın", o:"Ahvalin nicedir"}, {m:"Geldi", o:"Gelmiş idi"}, {m:"Söyledi", o:"Söylemiş idi"}] },
-                { type: "input", q: "Kendin dene: 'Hava çok soğuktu' cümlesini az önceki kurala göre (idi kullanarak) yaz.", keywords: ["idi", "soğuk idi"], exact: "Hava çok soğuk idi" }
+                { type: "match", q: "Modern kelimeleri, destansı halleriyle eşleştir:", pairs: [{m:"Nasılsın", o:"Ahvalin nicedir"}, {m:"Soğuktu", o:"Soğuk idi"}, {m:"Söyledi", o:"Söylemiş idi"}] },
+                { type: "input", q: "Kendin dene: 'Hava çok soğuktu' cümlesini (idi kullanarak) yaz.", keywords: ["idi", "soğuk idi"], exact: "Hava çok soğuk idi" }
             ]
         },
         {
-            title: "Geniş Zaman: 'Durur'",
+            title: "Geçmiş Zaman 2: Fiiller",
+            questions: [
+                { type: "teaching", text: "Fiillerde de durum aynıdır. Geldi yerine 'Gelmiş idi', gördü yerine 'Görmüş idi' deriz." },
+                { type: "choice", q: "'O buraları önceden görmüştü' nasıl söylenir?", a: ["O buraları önceden görmüş idi", "O buraları önceden gördü", "O buraları bilirdi"], kor: 0 },
+                { type: "match", q: "Fiilleri eşleştir:", pairs: [{m:"Biliyordu", o:"Bilmiş idi"}, {m:"Duymuştu", o:"Duymuş idi"}, {m:"Okumuştu", o:"Okumuş idi"}] },
+                { type: "input", q: "Kendin dene: 'O dün gelmişti' cümlesini kurala göre yaz.", keywords: ["gelmiş idi"], exact: "O dün gelmiş idi" }
+            ]
+        },
+
+        // --- GENİŞ ZAMAN (3 BÖLÜM) ---
+        {
+            title: "Geniş Zaman 1: 'Durur'",
             questions: [
                 { type: "teaching", text: "Şimdi de bildirme ekini (-tır, -tir, -dır) öğrenelim. Cümlenin sonuna 'durur' koyarız, manası kesindir!\n\nÖrnek:\nZordur ❌\nZor durur ✅" },
-                { type: "match", q: "Kelimeleri birbirine bağla yiğidim:", pairs: [{m:"Önemlidir", o:"Mühim durur"}, {m:"Silah", o:"Pusat"}, {m:"Böyledir", o:"Böyle durur"}] },
+                { type: "match", q: "Kelimeleri birbirine bağla yiğidim:", pairs: [{m:"Önemlidir", o:"Mühim durur"}, {m:"Böyledir", o:"Böyle durur"}, {m:"Güzeldir", o:"Güzel durur"}] },
                 { type: "input", q: "Kendin dene: 'Onun kılıcı keskindir' cümlesini 'durur' ile bitirerek yaz.", keywords: ["durur"], exact: "Onun kılıcı keskin durur" },
                 { type: "choice", q: "Düşman pusu kurmuş. 'Burası tehlikelidir' demek için ne söylersin?", a: ["Bu alan tehlikeli durur", "Burası tuzaktır", "Tehlike var idi"], kor: 0 }
             ]
         },
         {
-            title: "Emirler ve Zaman: 'Eyle / İmdik'",
+            title: "Geniş Zaman 2: Sıfatlar",
+            questions: [
+                { type: "teaching", text: "Sıfatları pekiştirmek için de 'durur' kullanırız. \n\nÖrnek:\nYücedir ❌ \nYüce durur ✅" },
+                { type: "choice", q: "'Dağlar çok yüksektir' nasıl denir?", a: ["Dağlar pek ulu durur", "Dağlar çok yüksekti", "Dağlar büyük idi"], kor: 0 },
+                { type: "match", q: "Sıfatları eşleştir:", pairs: [{m:"Büyüktür", o:"Ulu durur"}, {m:"İyidir", o:"Yahşi durur"}, {m:"Kötüdür", o:"Yaman durur"}] },
+                { type: "input", q: "Kendin dene: 'Bu at hızlıdır' demek için ne dersin?", keywords: ["hızlı durur", "durur"], exact: "Bu at hızlı durur" }
+            ]
+        },
+        {
+            title: "Geniş Zaman 3: Hakikat",
+            questions: [
+                { type: "teaching", text: "Kesin gerçekleri söylerken 'durur' şaşmaz kuralımızdır.\n\nÖrnek:\nHaktır ❌ \nHak durur ✅" },
+                { type: "match", q: "Gerçekleri eşleştir:", pairs: [{m:"Doğrudur", o:"Gerçek durur"}, {m:"Haktır", o:"Hak durur"}, {m:"Yanlıştır", o:"Batıl durur"}] },
+                { type: "input", q: "Kendin dene: 'Sözümüz sözdür' cümlesini kurala göre yaz.", keywords: ["söz durur"], exact: "Sözümüz söz durur" }
+            ]
+        },
+
+        // --- EMİRLER VE ZAMAN (4 BÖLÜM) ---
+        {
+            title: "Emirler 1: 'Eyle / İmdik'",
             questions: [
                 { type: "teaching", text: "Bir işi yapmak için 'yap, et' demeyiz, 'eyle' deriz. 'Şimdi' kelimesi yerine ise 'İmdik' deriz!\n\nÖrnek:\nŞimdi yap ❌\nİmdik eyle ✅" },
                 { type: "match", q: "Zaman ve eylem eşleştirmelerini tamamla:", pairs: [{m:"Şimdi", o:"İmdik"}, {m:"Affet", o:"Helal eyle"}, {m:"Dikkat et", o:"Dikkat eyle"}] },
@@ -260,11 +285,132 @@
             ]
         },
         {
-            title: "Cenk ve Meydan (Serbest)",
+            title: "Emirler 2: 'Kıl'",
+            questions: [
+                { type: "teaching", text: "Sadece 'eyle' yetmez, bazen 'kıl' deriz. Özellikle manevi işlerde! Namaz kılmak, Dua kılmak gibi." },
+                { type: "choice", q: "'Allah'a dua et' cümlesi obada nasıl yankılanır?", a: ["Allah'a dua kıl", "Allah'a dua eyle", "Allah'a yalvar durur"], kor: 0 },
+                { type: "match", q: "Doğru emirleri seç:", pairs: [{m:"Yardım et", o:"Medet kıl"}, {m:"Merhamet et", o:"Rahim kıl"}, {m:"Namaz kıl", o:"Namaz kıl"}] },
+                { type: "input", q: "Kendin dene: 'Bana yardım et' demek için 'kıl' kullan.", keywords: ["kıl", "medet"], exact: "Bana medet kıl" }
+            ]
+        },
+        {
+            title: "Zaman: Günler",
+            questions: [
+                { type: "teaching", text: "'Bugün', 'Yarın', 'Dün' kelimelerini destansı yapalım!\n\nYarın ❌ Yarınki gün ✅\nDün ❌ Dünki gün (veya Bıldır) ✅" },
+                { type: "match", q: "Zamanları eşleştir:", pairs: [{m:"Yarın", o:"Yarınki gün"}, {m:"Dün", o:"Dünki gün"}, {m:"Geçen Yıl", o:"Bıldır"}] },
+                { type: "choice", q: "'Yarın görüşürüz' nasıl denir?", a: ["Yarınki gün görüşürüz", "Yarın görüşürüz", "Yarınki gün görüştük idi"], kor: 0 }
+            ]
+        },
+        {
+            title: "Zaman ve Emirler (Karma)",
+            questions: [
+                { type: "teaching", text: "Öğrendiklerini birleştirme vakti! Zamanı ve emri aynı anda ver." },
+                { type: "input", q: "Kendin dene: 'Yarın yardım et' demek için ne dersin?", keywords: ["yarınki", "kıl", "medet"], exact: "Yarınki gün medet kıl" },
+                { type: "match", q: "Zamanları eşleştir:", pairs: [{m:"Şimdi yap", o:"İmdik eyle"}, {m:"Yarın gel", o:"Yarınki gün gel"}, {m:"Dün geldi", o:"Dünki gün gelmiş idi"}] }
+            ]
+        },
+
+        // --- CENK VE MEYDAN (3 BÖLÜM) ---
+        {
+            title: "Cenk 1: Meydan",
             questions: [
                 { type: "teaching", text: "Savaş = Cenk\nAsker = Alp / Nöker\nDüşman = Kefere / Gafil" },
                 { type: "match", q: "Savaş terimlerini eşleştir:", pairs: [{m:"Asker", o:"Alp"}, {m:"Savaş", o:"Cenk"}, {m:"Düşman", o:"Gafil"}] },
-                { type: "choice", q: "Kılıç, kalkan gibi aletlere genel olarak ne ad verilir?", a: ["Pusat", "Zırh", "Silah"], kor: 0 }
+                { type: "choice", q: "Obamızın yiğitlerine cenk meydanında ne denir?", a: ["Alp", "Silahşör", "Asker"], kor: 0 }
+            ]
+        },
+        {
+            title: "Cenk 2: Pusatlar",
+            questions: [
+                { type: "teaching", text: "Cenk aletlerine genel olarak 'Pusat' denir. Ok, yay, kılıç, kalkan, gürz... Pusatını kuşan!" },
+                { type: "match", q: "Silahları eşleştir:", pairs: [{m:"Kılıç", o:"Kılıç"}, {m:"Zırh", o:"Cevşen"}, {m:"Savaş Baltası", o:"Teber"}] },
+                { type: "input", q: "Kendin dene: Askerlerine 'Silahlarını al' emrini destansı ver.", keywords: ["pusat", "kuşan"], exact: "Pusatlarını kuşan" }
+            ]
+        },
+        {
+            title: "Cenk 3: Taktik",
+            questions: [
+                { type: "teaching", text: "Akın (saldırı), Pusu (tuzak), Tuğ (sancak).\nCenk meydanında akıl da lazımdır!" },
+                { type: "choice", q: "Düşmanın pusu kurduğunu nasıl söylersin?", a: ["Gafil pusu kurmuş durur", "Kötüler tuzak kurdu", "Düşman bekler idi"], kor: 0 },
+                { type: "match", q: "Taktikleri eşleştir:", pairs: [{m:"Saldırı", o:"Akın"}, {m:"Bayrak", o:"Tuğ"}, {m:"Komutan", o:"Başbuğ"}] }
+            ]
+        },
+
+        // --- 12 BÖLÜMDEN SONRA AÇILANLAR (GÜNLÜK HAYAT - 3 BÖLÜM) ---
+        {
+            title: "Günlük Hayat 1: Selam",
+            questions: [
+                { type: "teaching", text: "'Merhaba' yerine 'Esenlikler' veya 'Esen misin?' deriz. Durum sormak için 'Ahvalin nicedir?' deriz." },
+                { type: "match", q: "Selamlaşmaları eşleştir:", pairs: [{m:"Merhaba", o:"Esenlikler"}, {m:"Nasılsın", o:"Ahvalin nicedir"}, {m:"İyiyim", o:"Yahşiyim"}] },
+                { type: "input", q: "Kendin dene: Birine merhaba demek için ne dersin?", keywords: ["esenlikler", "esen"], exact: "Esenlikler" }
+            ]
+        },
+        {
+            title: "Günlük Hayat 2: Aş ve Toy",
+            questions: [
+                { type: "teaching", text: "Yemek için 'Aş', şenlik ve ziyafet için 'Toy', içecek için 'Kımız' veya 'Şerbet' deriz." },
+                { type: "choice", q: "'Akşam yemeği hazır' nasıl denir?", a: ["Akşam aşı hazır durur", "Akşam yemeği oldu", "Yemek zamanıdır"], kor: 0 },
+                { type: "match", q: "Yemekleri eşleştir:", pairs: [{m:"Yemek", o:"Aş"}, {m:"Ziyafet", o:"Toy"}, {m:"İçecek", o:"Kımız"}] }
+            ]
+        },
+        {
+            title: "Günlük Hayat 3: Boy ve Oba",
+            questions: [
+                { type: "teaching", text: "Aileye 'Soy', çadırların toplandığı yere 'Oba', liderimize 'Bey', eşine 'Hatun' deriz." },
+                { type: "match", q: "Kişileri eşleştir:", pairs: [{m:"Köy", o:"Oba"}, {m:"Lider", o:"Bey"}, {m:"Kadın", o:"Hatun"}] },
+                { type: "input", q: "Kendin dene: 'Köyümüz çok büyüktür' demek için ne dersin?", keywords: ["oba", "ulu"], exact: "Obamız pek ulu durur" }
+            ]
+        },
+
+        // --- DOĞA VE ÇEVRE (3 BÖLÜM) ---
+        {
+            title: "Doğa 1: Gök ve Yer",
+            questions: [
+                { type: "teaching", text: "Doğa ulu durur! Gökyüzüne 'Gök', yeryüzüne 'Yer' veya dünyamıza 'Acun' deriz." },
+                { type: "match", q: "Dünyayı tanıyalım:", pairs: [{m:"Dünya", o:"Acun"}, {m:"Gökyüzü", o:"Gök"}, {m:"Toprak", o:"Yer"}] },
+                { type: "choice", q: "'Dünya çok büyüktür' nasıl söylenir?", a: ["Acun pek ulu durur", "Dünya ulu idi", "Yer geniştir"], kor: 0 }
+            ]
+        },
+        {
+            title: "Doğa 2: Hayvanlar",
+            questions: [
+                { type: "teaching", text: "Kurt sıradan bir hayvan değildir, o 'Börü'dür! Atımız binek ve yoldaşımızdır. Köpeğe 'İt' denir." },
+                { type: "match", q: "Hayvanları eşleştir:", pairs: [{m:"Kurt", o:"Börü"}, {m:"Köpek", o:"İt"}, {m:"At", o:"Binek"}] },
+                { type: "input", q: "Kendin dene: 'Ormanda kurt gördüm' demek için (kurt yerine) ne yazarsın?", keywords: ["börü"], exact: "Ormanda börü gördüm" }
+            ]
+        },
+        {
+            title: "Doğa 3: Yönler",
+            questions: [
+                { type: "teaching", text: "Yönleri güneşe göre söyleriz. Doğuya 'Gündoğusu', batıya 'Günbatısı' deriz." },
+                { type: "match", q: "Yönleri eşleştir:", pairs: [{m:"Doğu", o:"Gündoğusu"}, {m:"Batı", o:"Günbatısı"}, {m:"Kuzey", o:"Kuzey"}, {m:"Güney", o:"Güney"}] },
+                { type: "input", q: "Kendin dene: 'Güneş doğudan doğar' cümlesini yönlere göre çevir.", keywords: ["gündoğusu", "gün"], exact: "Gün gündoğusundan doğar" }
+            ]
+        },
+
+        // --- HİSSİYAT (3 BÖLÜM) ---
+        {
+            title: "Hissiyat 1: Yürek",
+            questions: [
+                { type: "teaching", text: "Kalp yerine 'Yürek', aşk yerine 'Sevda' veya 'Gönül vermek' deriz. Acı ise 'Keder' veya 'Dert'tir." },
+                { type: "match", q: "Duyguları eşleştir:", pairs: [{m:"Kalp", o:"Yürek"}, {m:"Aşk", o:"Sevda"}, {m:"Acı", o:"Keder"}] },
+                { type: "choice", q: "'Kalbim ağrıyor' yerine destansı ne dersin?", a: ["Yüreğim dertli durur", "Kalbim sızlar idi", "Canım yanar"], kor: 0 }
+            ]
+        },
+        {
+            title: "Hissiyat 2: Akıl ve Us",
+            questions: [
+                { type: "teaching", text: "Akıllı kişiye 'Bilge' veya 'Uslu' deriz. Akıl kelimesinin aslı 'Us'tur." },
+                { type: "match", q: "Aklı eşleştir:", pairs: [{m:"Akıllı", o:"Uslu"}, {m:"Alim/Zeki", o:"Bilge"}, {m:"Akıl", o:"Us"}] },
+                { type: "input", q: "Kendin dene: 'O çok akıllıdır' demek için ne dersin?", keywords: ["uslu", "durur"], exact: "O pek uslu durur" }
+            ]
+        },
+        {
+            title: "Hissiyat 3: Öfke ve Yılgı",
+            questions: [
+                { type: "teaching", text: "Düşmana öfkeleniriz! Korku yerine 'Yılgı', cesur savaşçıya 'Batur' veya 'Bahadır' deriz." },
+                { type: "match", q: "Hissi halleri eşleştir:", pairs: [{m:"Cesur", o:"Batur"}, {m:"Korku", o:"Yılgı"}, {m:"Öfke", o:"Hiddet"}] },
+                { type: "choice", q: "'Ordumuz korkusuzdur' nasıl denir?", a: ["Ordumuz yılgı bilmez durur", "Ordumuz korkmaz idi", "Alpler korkusuzdur"], kor: 0 }
             ]
         }
     ];
@@ -277,14 +423,14 @@
 
     let currentVoiceText = "";
     let lifeTimerInterval = null;
-    
-    // Eşleştirme oyunu için değişkenler
     let matchState = { leftNode: null, rightNode: null, matchedCount: 0, totalPairs: 0 };
 
     window.addEventListener('load', () => {
         const storedUser = localStorage.getItem('qwertzio_user_data');
         if (storedUser) {
             appState = JSON.parse(storedUser);
+            // Mevcut kullanıcılar için yeni bölüm uyumluluğu kontrolü
+            if(appState.currentLevel >= LEVEL_DATA.length) appState.currentLevel = LEVEL_DATA.length - 1;
             loadDashboard();
         }
         initLifeTimerLogic();
@@ -386,7 +532,7 @@
         if(qData.type === 'teaching') {
             document.getElementById('teaching-content-text').innerText = qData.text;
             switchScreen('screen-teaching');
-            speakSultan(qData.text.split('\n')[0]); // Sadece ilk cümleyi oku
+            speakSultan(qData.text.split('\n')[0]);
         } else {
             loadQuestion(qData, lvl.questions.length);
         }
@@ -411,7 +557,6 @@
         currentVoiceText = qData.q;
         speakSultan(currentVoiceText);
 
-        // Panelleri gizle
         document.getElementById('quiz-options-wrapper').style.display = 'none';
         document.getElementById('quiz-match-wrapper').style.display = 'none';
         document.getElementById('quiz-input-wrapper').style.display = 'none';
@@ -430,7 +575,6 @@
 
     function replayQuestionVoice() { speakSultan(currentVoiceText); }
 
-    // ÇOKTAN SEÇMELİ
     function renderChoice(qData) {
         let optionsObj = qData.a.map((text, idx) => ({ text, isCorrect: idx === qData.kor }));
         optionsObj.sort(() => Math.random() - 0.5);
@@ -444,31 +588,26 @@
         });
     }
 
-    // YAZI YAZMA (Input) KONTROLÜ
     function checkInputAnswer() {
         const userInput = document.getElementById('quiz-text-input').value.trim().toLowerCase();
         if(!userInput) { showPersistentToast("Bir şeyler karalamalısın!"); return; }
         
         const qData = LEVEL_DATA[appState.activeQuizLevel].questions[appState.activeQuestionIdx];
-        
-        // Anahtar kelime kontrolü
         const hasKeyword = qData.keywords.some(kw => userInput.includes(kw.toLowerCase()));
         
         if (hasKeyword) {
-            // Tam eşleşme mi?
             if (userInput === qData.exact.toLowerCase()) {
                 showPersistentToast("Mükemmel kelam! Birebir yazdın.", "✨");
             } else {
                 showPersistentToast("Cümlen benzedi, daha iyisini yapabilirdin ama yürü yiğidim!", "👍");
             }
-            handleAnswer(true, true); // Sessizce geç (zaten toast gösterdik)
+            handleAnswer(true, true);
         } else {
             showPersistentToast("Yanlış kelam eyledin! Tekrar dene. (Sana cevabı söylemem!)", "❌");
             handleAnswer(false, true);
         }
     }
 
-    // EŞLEŞTİRME OYUNU
     function renderMatch(qData) {
         matchState = { leftNode: null, rightNode: null, matchedCount: 0, totalPairs: qData.pairs.length };
         const wrapper = document.getElementById('quiz-match-wrapper');
@@ -494,7 +633,6 @@
     function onMatchClick(btn, item) {
         if(btn.classList.contains('matched')) return;
         
-        // Aynı tarafa tıklandıysa seçimi değiştir
         if(item.side === 'L') {
             if(matchState.leftNode) matchState.leftNode.btn.classList.remove('selected');
             matchState.leftNode = {btn, id: item.id};
@@ -505,10 +643,8 @@
             btn.classList.add('selected');
         }
 
-        // İkisi de seçildiyse kontrol et
         if(matchState.leftNode && matchState.rightNode) {
             if(matchState.leftNode.id === matchState.rightNode.id) {
-                // DOĞRU
                 matchState.leftNode.btn.classList.add('matched');
                 matchState.rightNode.btn.classList.add('matched');
                 matchState.leftNode.btn.classList.remove('selected');
@@ -520,19 +656,17 @@
                     setTimeout(() => handleAnswer(true), 500);
                 }
             } else {
-                // YANLIŞ
                 let lBtn = matchState.leftNode.btn; let rBtn = matchState.rightNode.btn;
                 lBtn.classList.remove('selected'); rBtn.classList.remove('selected');
                 lBtn.classList.add('error'); rBtn.classList.add('error');
                 matchState.leftNode = null; matchState.rightNode = null;
                 
                 setTimeout(() => { lBtn.classList.remove('error'); rBtn.classList.remove('error'); }, 400);
-                handleAnswer(false, true); // Yanlış eşleştirme sadece can götürür, soruyu atlatmaz.
+                handleAnswer(false, true);
             }
         }
     }
 
-    // GENEL CEVAP KONTROLÜ
     function handleAnswer(isCorrect, customMessage = false) {
         window.speechSynthesis.cancel();
         
@@ -556,12 +690,16 @@
 
     function handleLevelCompletion() {
         appState.streak++; document.getElementById('streak-count').innerText = appState.streak;
-        if (appState.activeQuizLevel === appState.currentLevel) appState.currentLevel++;
+        
+        // Eğer bitirilen seviye en son açılan seviyeyse yenisini aç (toplam sınırına kadar)
+        if (appState.activeQuizLevel === appState.currentLevel && appState.currentLevel < LEVEL_DATA.length - 1) {
+            appState.currentLevel++;
+        }
+        
         saveProgress(); renderPathNodes();
 
         speakSultan("Bileğine kuvvet! Toyu başarıyla geçtin.");
         
-        // PWA Kısayol Sorusu (Sadece 1. Bölüm bitince ve platform Web ise)
         if (appState.activeQuizLevel === 0 && appState.platform === 'web' && !appState.promptedPWA) {
             setTimeout(() => {
                 if(confirm("Daha hızlı girmek için Qwertzio'yu ana ekrana eklemek ister misin?")) {
@@ -592,13 +730,12 @@
         document.getElementById(screenId).classList.add('active');
     }
 
-    // YENİ CAN SÜRESİ: 30 Saniye
     function initLifeTimerLogic() {
         if (lifeTimerInterval) clearInterval(lifeTimerInterval);
         lifeTimerInterval = setInterval(() => {
             if (appState.lives < 5 && appState.lastLifeTimestamp) {
                 const elapsedMs = Date.now() - appState.lastLifeTimestamp;
-                const cooldownMs = 30 * 1000; // 30 saniye
+                const cooldownMs = 30 * 1000; 
                 
                 if (elapsedMs >= cooldownMs) {
                     appState.lives++; document.getElementById('lives-count').innerText = appState.lives;
